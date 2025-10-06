@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: uptime-postgres
+    environment:
+      POSTGRES_DB: uptime_monitor
+      POSTGRES_USER: uptime
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./server/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uptime -d uptime_monitor"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for queues and caching
+  redis:
+    image: redis:7-alpine
+    container_name: uptime-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Node.js Backend
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: uptime-backend
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://uptime:${POSTGRES_PASSWORD}@postgres:5432/uptime_monitor
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
+      TWILIO_PHONE_NUMBER: ${TWILIO_PHONE_NUMBER}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET}
+      CLIENT_URL: ${CLIENT_URL}
+      CHECK_REGION: ${CHECK_REGION}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./server/logs:/app/logs
+
+  # Worker processes
+  worker:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: uptime-worker
+    command: node worker.js
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://uptime:${POSTGRES_PASSWORD}@postgres:5432/uptime_monitor
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      CHECK_REGION: ${CHECK_REGION}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./server/logs:/app/logs
+
+  # React Frontend (Nginx)
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: uptime-frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  default:
+    name: uptime-network

@@ -1,0 +1,54 @@
+{
+  "name": "uptime-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "dotenv": "^16.3.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "joi": "^17.11.0",
+    "zod": "^3.22.4",
+    "prisma": "^5.7.1",
+    "@prisma/client": "^5.7.1",
+    "bull": "^4.12.2",
+    "redis": "^4.6.12",
+    "socket.io": "^4.7.4",
+    "axios": "^1.6.2",
+    "ping": "^0.4.4",
+    "net": "^1.0.2",
+    "tls": "^0.0.1",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.7",
+    "twilio": "^4.19.0",
+    "uuid": "^9.0.1",
+    "crypto": "^1.0.1",
+    "moment": "^2.29.4",
+    "express-rate-limit": "^7.1.5",
+    "compression": "^1.7.4",
+    "@bull-board/api": "^5.10.0",
+    "@bull-board/express": "^5.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

@@ -1,0 +1,260 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  password        String
+  name            String
+  timezone        String   @default("UTC")
+  plan            String   @default("free")
+  isEmailVerified Boolean  @default(false)
+  emailVerifyToken String?
+  passwordResetToken String?
+  passwordResetExpires DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  workspaces      WorkspaceMember[]
+  apiTokens       ApiToken[]
+  notifications   Notification[]
+  
+  @@map("users")
+}
+
+model Workspace {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  members     WorkspaceMember[]
+  monitors    Monitor[]
+  statusPages StatusPage[]
+  alertContacts AlertContact[]
+  
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id          String   @id @default(uuid())
+  role        String   // admin, member, viewer
+  userId      String
+  workspaceId String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  
+  @@unique([userId, workspaceId])
+  @@map("workspace_members")
+}
+
+model Monitor {
+  id              String   @id @default(uuid())
+  name            String
+  type            String   // http, ping, port, keyword, heartbeat, ssl, domain
+  url             String?
+  ip              String?
+  port            Int?
+  interval        Int      @default(300) // seconds
+  timeout         Int      @default(30)
+  httpMethod      String?  @default("GET")
+  expectedStatus  String?  @default("200") // Comma-separated status codes
+  keyword         String?
+  keywordType     String?  // exists, not-exists
+  headers         String?   // JSON string for headers
+  body            String?
+  followRedirects Boolean  @default(true)
+  verifySsl       Boolean  @default(true)
+  retryCount      Int      @default(2)
+  status          String   @default("paused") // up, down, paused, maintenance
+  isActive        Boolean  @default(true)
+  lastCheckAt     DateTime?
+  lastDowntime    DateTime?
+  lastUptime      DateTime?
+  uptimePercentage Float?
+  avgResponseTime  Float?
+  workspaceId     String
+  workspace       Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  checks          Check[]
+  incidents       Incident[]
+  alertRules      MonitorAlertRule[]
+  maintenanceWindows MaintenanceWindow[]
+  tags            Tag[]
+  statusPageMonitors StatusPageMonitor[]
+  
+  @@map("monitors")
+}
+
+model Check {
+  id           String   @id @default(uuid())
+  monitorId    String
+  status       String   // up, down
+  statusCode   Int?
+  responseTime Int?     // milliseconds
+  errorMessage String?
+  checkedAt    DateTime @default(now())
+  region       String?  @default("us-east")
+  monitor      Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  
+  @@index([monitorId, checkedAt])
+  @@map("checks")
+}
+
+model Incident {
+  id               String   @id @default(uuid())
+  monitorId        String
+  title            String
+  status           String   // investigating, identified, monitoring, resolved
+  severity         String   @default("major") // minor, major, critical
+  startedAt        DateTime @default(now())
+  resolvedAt       DateTime?
+  acknowledgedAt   DateTime?
+  acknowledgedBy   String?
+  rootCause        String?
+  notes            String?
+  monitor          Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  updates          IncidentUpdate[]
+  notifications    Notification[]
+  
+  @@index([monitorId, startedAt])
+  @@map("incidents")
+}
+
+model IncidentUpdate {
+  id         String   @id @default(uuid())
+  incidentId String
+  status     String
+  message    String
+  createdAt  DateTime @default(now())
+  createdBy  String?
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  
+  @@map("incident_updates")
+}
+
+model AlertContact {
+  id          String   @id @default(uuid())
+  name        String
+  type        String   // email, sms, slack, discord, webhook, telegram, pagerduty
+  value       String   // email address, phone, webhook URL, etc.
+  isActive    Boolean  @default(true)
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  monitorAlertRules MonitorAlertRule[]
+  
+  @@map("alert_contacts")
+}
+
+model MonitorAlertRule {
+  id             String   @id @default(uuid())
+  monitorId      String
+  alertContactId String
+  alertOnDown    Boolean  @default(true)
+  alertOnUp      Boolean  @default(true)
+  alertOnSlow    Boolean  @default(false)
+  slowThreshold  Int?     // milliseconds
+  monitor        Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  alertContact   AlertContact @relation(fields: [alertContactId], references: [id], onDelete: Cascade)
+  
+  @@unique([monitorId, alertContactId])
+  @@map("monitor_alert_rules")
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  userId     String
+  incidentId String?
+  type       String   // incident_started, incident_resolved, monitor_down, monitor_up
+  message    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  incident   Incident? @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model StatusPage {
+  id              String   @id @default(uuid())
+  name            String
+  slug            String   @unique
+  description     String?
+  customDomain    String?
+  isPublic        Boolean  @default(true)
+  password        String?
+  logoUrl         String?
+  primaryColor    String?  @default("#3b82f6")
+  workspaceId     String
+  workspace       Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  monitors        StatusPageMonitor[]
+  
+  @@map("status_pages")
+}
+
+model StatusPageMonitor {
+  id           String   @id @default(uuid())
+  statusPageId String
+  monitorId    String
+  displayOrder Int      @default(0)
+  statusPage   StatusPage @relation(fields: [statusPageId], references: [id], onDelete: Cascade)
+  monitor      Monitor @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  
+  @@unique([statusPageId, monitorId])
+  @@map("status_page_monitors")
+}
+
+model MaintenanceWindow {
+  id          String   @id @default(uuid())
+  monitorId   String
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  isRecurring Boolean  @default(false)
+  recurrence  String?  // cron expression
+  createdAt   DateTime @default(now())
+  monitor     Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  
+  @@map("maintenance_windows")
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String
+  color     String?  @default("#gray")
+  monitorId String
+  monitor   Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  
+  @@map("tags")
+}
+
+model ApiToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  name      String
+  userId    String
+  lastUsed  DateTime?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("api_tokens")
+}

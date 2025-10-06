@@ -1,0 +1,61 @@
+# Uptime Monitor Caddyfile
+# Replace example.com with your domain
+
+example.com {
+    # Enable automatic HTTPS
+    tls your-email@example.com
+    
+    # Redirect www to non-www
+    redir www.{host} {host} 301
+    
+    # API routes
+    handle /api/* {
+        reverse_proxy localhost:3000
+    }
+    
+    # WebSocket support for Socket.io
+    handle /socket.io/* {
+        reverse_proxy localhost:3000
+    }
+    
+    # Admin queue dashboard
+    handle /admin/* {
+        reverse_proxy localhost:3000
+    }
+    
+    # Public status pages
+    handle /status/* {
+        reverse_proxy localhost:3000
+    }
+    
+    # Static files (React build)
+    handle {
+        root * /var/www/uptime/client/dist
+        try_files {path} /index.html
+        file_server
+    }
+}
+
+# Status page subdomain
+status.example.com {
+    tls your-email@example.com
+    
+    reverse_proxy localhost:3000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+# API subdomain (optional)
+api.example.com {
+    tls your-email@example.com
+    
+    reverse_proxy localhost:3000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
