@@ -22,7 +22,7 @@ export default function StatusPageDetailPage() {
     }
   })
   
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['status-page', id],
     queryFn: () => api.get(`/status-pages/${id}`).then(res => res.data),
     enabled: !!id && !isCreateMode,
@@ -33,6 +33,19 @@ export default function StatusPageDetailPage() {
       }
     }
   })
+  
+  // If edit mode and data loaded, populate the form
+  if (!isCreateMode && data?.statusPage && !isLoading) {
+    // Only reset once when data is first loaded
+    const formValues = {
+      name: data.statusPage.name || '',
+      description: data.statusPage.description || '',
+      primaryColor: data.statusPage.primaryColor || '#3b82f6',
+      logoUrl: data.statusPage.logoUrl || '',
+      customDomain: data.statusPage.customDomain || '',
+      isPublic: data.statusPage.isPublic !== undefined ? data.statusPage.isPublic : true
+    }
+  }
 
   const createMutation = useMutation({
     mutationFn: (data) => {
@@ -90,8 +103,25 @@ export default function StatusPageDetailPage() {
     }
   }
 
-  if (isLoading) {
+  if (!isCreateMode && isLoading) {
     return <LoadingSpinner />
+  }
+  
+  if (!isCreateMode && error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h2 className="text-lg font-semibold text-red-600 mb-2">Status page not found</h2>
+          <p className="text-gray-600 mb-4">The status page you're looking for doesn't exist or you don't have access to it.</p>
+          <button
+            onClick={() => navigate('/status-pages')}
+            className="btn btn-primary btn-md"
+          >
+            Back to Status Pages
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -104,7 +134,7 @@ export default function StatusPageDetailPage() {
           <button
             onClick={handleDelete}
             disabled={deleteMutation.isLoading}
-            className="btn btn-danger"
+            className="btn btn-danger btn-md"
           >
             {deleteMutation.isLoading ? 'Deleting...' : 'Delete'}
           </button>
@@ -196,14 +226,14 @@ export default function StatusPageDetailPage() {
           <button
             type="submit"
             disabled={createMutation.isLoading || updateMutation.isLoading}
-            className="btn btn-primary"
+            className="btn btn-primary btn-md"
           >
             {createMutation.isLoading || updateMutation.isLoading ? 'Saving...' : isCreateMode ? 'Create Status Page' : 'Update Status Page'}
           </button>
           <button
             type="button"
             onClick={() => navigate('/status-pages')}
-            className="btn btn-secondary"
+            className="btn btn-secondary btn-md"
           >
             Cancel
           </button>
