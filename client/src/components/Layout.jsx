@@ -19,7 +19,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
   { name: 'Monitors', href: '/monitors', icon: ServerIcon },
   { name: 'Incidents', href: '/incidents', icon: ExclamationTriangleIcon },
-  { name: 'Contacts', href: '/alerts', icon: BellIcon },
+  { name: 'Alerts', href: '/alerts', icon: BellIcon },
   { name: 'Status Pages', href: '/status-pages', icon: ServerIcon },
   { name: 'Settings', href: '/settings', icon: CogIcon },
 ]

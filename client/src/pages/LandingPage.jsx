@@ -15,10 +15,10 @@ import {
 } from '@heroicons/react/24/outline'
 
 const navigation = [
-  { name: 'Features', href: '#features' },
-  { name: 'Pricing', href: '#pricing' },
-  { name: 'Documentation', href: '#docs' },
-  { name: 'Status', href: '/status/demo-status' },
+  { name: 'Features', href: '#features', type: 'scroll' },
+  { name: 'Pricing', href: '#pricing', type: 'scroll' },
+  { name: 'Documentation', href: '/docs', type: 'link' },
+  { name: 'Status', href: '/status/demo-status', type: 'link' },
 ]
 
 const features = [
@@ -121,17 +121,31 @@ export default function LandingPage() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:gap-x-8">
             {navigation.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors"
-              >
-                {item.name}
-              </a>
+              item.type === 'scroll' ? (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors cursor-pointer"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors"
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
           </div>
           
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4 lg:items-center">
             <Link 
               to="/login" 
               className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors"
@@ -184,14 +198,31 @@ export default function LandingPage() {
                 <div className="-my-6 divide-y divide-gray-500/10">
                   <div className="space-y-2 py-6">
                     {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {item.name}
-                      </a>
+                      item.type === 'scroll' ? (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setMobileMenuOpen(false)
+                            setTimeout(() => {
+                              document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth' })
+                            }, 100)
+                          }}
+                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 cursor-pointer"
+                        >
+                          {item.name}
+                        </a>
+                      ) : (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                        >
+                          {item.name}
+                        </Link>
+                      )
                     ))}
                   </div>
                   <div className="py-6 space-y-2">

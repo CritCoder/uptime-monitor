@@ -13,7 +13,10 @@ export function SocketProvider({ children }) {
   useEffect(() => {
     if (user) {
       const token = localStorage.getItem('token')
-      const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
+      // Get base URL by removing /api suffix if present
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+      const baseUrl = apiUrl.replace(/\/api$/, '')
+      const newSocket = io(baseUrl, {
         auth: { token }
       })
 
