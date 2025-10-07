@@ -15,6 +15,7 @@ model User {
   email           String   @unique
   password        String
   name            String
+  avatarUrl       String?
   timezone        String   @default("UTC")
   plan            String   @default("free")
   isEmailVerified Boolean  @default(false)
@@ -62,6 +63,7 @@ model WorkspaceMember {
 model Monitor {
   id              String   @id @default(uuid())
   name            String
+  slug            String?  @unique
   type            String   // http, ping, port, keyword, heartbeat, ssl, domain
   url             String?
   ip              String?

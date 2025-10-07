@@ -63,7 +63,7 @@ export default function SettingsPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700">Timezone</label>
-              <select {...register('timezone')} className="input mt-1">
+              <select {...register('timezone')} className="select mt-1">
                 <option value="UTC">UTC</option>
                 <option value="America/New_York">Eastern Time</option>
                 <option value="America/Chicago">Central Time</option>

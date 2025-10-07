@@ -149,6 +149,7 @@ router.post('/login', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        avatarUrl: user.avatarUrl,
         timezone: user.timezone,
         plan: user.plan,
         isEmailVerified: user.isEmailVerified,
@@ -316,6 +317,7 @@ router.get('/me', authenticateToken, async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        avatarUrl: user.avatarUrl,
         timezone: user.timezone,
         plan: user.plan,
         isEmailVerified: user.isEmailVerified,
@@ -337,13 +339,14 @@ router.get('/me', authenticateToken, async (req, res) => {
 // Update user profile
 router.put('/profile', authenticateToken, async (req, res) => {
   try {
-    const { name, timezone } = req.body;
+    const { name, timezone, avatarUrl } = req.body;
 
     const user = await prisma.user.update({
       where: { id: req.user.id },
       data: {
-        name: name || req.user.name,
-        timezone: timezone || req.user.timezone
+        ...(name && { name }),
+        ...(timezone && { timezone }),
+        ...(avatarUrl !== undefined && { avatarUrl }),
       }
     });
 
@@ -353,6 +356,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        avatarUrl: user.avatarUrl,
         timezone: user.timezone
       }
     });

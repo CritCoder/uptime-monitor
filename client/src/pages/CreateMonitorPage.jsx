@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
+import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import toast from 'react-hot-toast'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -8,7 +9,30 @@ import LoadingSpinner from '../components/LoadingSpinner'
 export default function CreateMonitorPage() {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { id } = useParams()
+  const isEditMode = !!id
+  const { register, handleSubmit, formState: { errors }, reset } = useForm()
+
+  // Fetch monitor data if editing
+  const { data: monitorData, isLoading: isLoadingMonitor } = useQuery({
+    queryKey: ['monitor', id],
+    queryFn: () => api.get(`/monitors/${id}`).then(res => res.data),
+    enabled: isEditMode,
+    retry: 1
+  })
+
+  // Populate form with existing data
+  useEffect(() => {
+    if (monitorData?.monitor) {
+      reset({
+        name: monitorData.monitor.name,
+        type: monitorData.monitor.type,
+        url: monitorData.monitor.url || '',
+        interval: monitorData.monitor.interval,
+        port: monitorData.monitor.port || '',
+      })
+    }
+  }, [monitorData, reset])
 
   const onSubmit = async (data) => {
     setLoading(true)
@@ -19,20 +43,36 @@ export default function CreateMonitorPage() {
         interval: parseInt(data.interval),
         ...(data.port && { port: parseInt(data.port) })
       }
-      await api.post('/monitors', payload)
-      toast.success('Monitor created successfully!')
+      
+      if (isEditMode) {
+        await api.put(`/monitors/${id}`, payload)
+        toast.success('Monitor updated successfully!')
+      } else {
+        await api.post('/monitors', payload)
+        toast.success('Monitor created successfully!')
+      }
       navigate('/monitors')
     } catch (error) {
-      console.error('Create monitor error:', error);
-      toast.error(error.response?.data?.error || 'Failed to create monitor')
+      console.error('Save monitor error:', error);
+      toast.error(error.response?.data?.error || `Failed to ${isEditMode ? 'update' : 'create'} monitor`)
     } finally {
       setLoading(false)
     }
   }
 
+  if (isEditMode && isLoadingMonitor) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Create Monitor</h1>
+      <h1 className="text-2xl font-bold text-gray-900">
+        {isEditMode ? 'Edit Monitor' : 'Create Monitor'}
+      </h1>
       
       <form onSubmit={handleSubmit(onSubmit)} className="card p-6 space-y-4">
         <div>
@@ -49,7 +89,7 @@ export default function CreateMonitorPage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">Type</label>
-          <select {...register('type')} className="input mt-1">
+          <select {...register('type')} className="select mt-1">
             <option value="http">HTTP/HTTPS</option>
             <option value="ping">Ping</option>
             <option value="port">Port</option>
@@ -70,7 +110,7 @@ export default function CreateMonitorPage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">Check Interval</label>
-          <select {...register('interval')} className="input mt-1">
+          <select {...register('interval')} className="select mt-1">
             <option value={30}>30 seconds</option>
             <option value={60}>1 minute</option>
             <option value={300}>5 minutes</option>
@@ -86,7 +126,7 @@ export default function CreateMonitorPage() {
             disabled={loading}
             className="btn btn-primary btn-md"
           >
-            {loading ? <LoadingSpinner size="sm" /> : 'Create Monitor'}
+            {loading ? <LoadingSpinner size="sm" /> : (isEditMode ? 'Update Monitor' : 'Create Monitor')}
           </button>
           <button
             type="button"

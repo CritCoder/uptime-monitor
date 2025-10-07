@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import { formatRelativeTime, getSeverityColor } from '../lib/utils'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from '../components/Empty'
+import { ExclamationTriangleIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '../components/Empty'
 
 export default function IncidentsPage() {
   const [page, setPage] = useState(1)
@@ -49,35 +49,64 @@ export default function IncidentsPage() {
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">Recent Incidents</h3>
         </div>
-        <div className="divide-y divide-gray-200">
-          {data?.incidents?.map((incident) => (
-            <div key={incident.id} className="px-6 py-4 hover:bg-gray-50">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-gray-400" />
-                  <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSeverityColor(incident.severity)}`}>
-                    {incident.severity}
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-900">{incident.title}</h4>
-                    <p className="text-sm text-gray-500">
-                      {incident.monitor?.name} • {formatRelativeTime(incident.startedAt)}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-500">{incident.status}</span>
-                  <Link
-                    to={`/incidents/${incident.id}`}
-                    className="text-primary-600 hover:text-primary-500"
-                  >
-                    View
-                  </Link>
-                </div>
+        {data?.incidents?.length === 0 ? (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <CheckCircleIcon className="w-16 h-16 text-green-500" />
+              </EmptyMedia>
+              <EmptyTitle>All Systems Operational</EmptyTitle>
+              <EmptyDescription>
+                Great news! No incidents have been reported.<br />
+                All your monitors are running smoothly.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link
+                  to="/monitors"
+                  className="btn btn-primary btn-md"
+                >
+                  View Monitors
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className="btn btn-secondary btn-md"
+                >
+                  Go to Dashboard
+                </Link>
               </div>
-            </div>
-          ))}
-        </div>
+            </EmptyContent>
+          </Empty>
+        ) : (
+          <div className="divide-y divide-gray-200">
+            {data?.incidents?.map((incident) => (
+              <Link
+                key={incident.id}
+                to={`/incidents/${incident.id}`}
+                className="block px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <ExclamationTriangleIcon className="h-5 w-5 text-gray-400" />
+                    <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSeverityColor(incident.severity)}`}>
+                      {incident.severity}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-900">{incident.title}</h4>
+                      <p className="text-sm text-gray-500">
+                        {incident.monitor?.name} • {formatRelativeTime(incident.startedAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span className="text-sm text-gray-500 capitalize">{incident.status}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

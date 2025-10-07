@@ -6,6 +6,32 @@ import { scheduleMonitorCheck } from '../services/queue.js';
 
 const router = express.Router();
 
+// Helper function to generate slug from name
+function generateSlug(name) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 50);
+}
+
+// Helper function to ensure unique slug
+async function generateUniqueSlug(name, monitorId = null) {
+  let slug = generateSlug(name);
+  let counter = 1;
+  
+  while (true) {
+    const existing = await prisma.monitor.findUnique({
+      where: { slug: counter > 1 ? `${slug}-${counter}` : slug }
+    });
+    
+    if (!existing || existing.id === monitorId) {
+      return counter > 1 ? `${slug}-${counter}` : slug;
+    }
+    counter++;
+  }
+}
+
 // Validation schemas
 const createMonitorSchema = z.object({
   name: z.string().min(1).max(100),
@@ -155,9 +181,12 @@ router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Check if id is a UUID or a slug
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
     const monitor = await prisma.monitor.findFirst({
       where: {
-        id,
+        ...(isUUID ? { id } : { slug: id }),
         workspace: {
           members: {
             some: { userId: req.user.id }
@@ -220,10 +249,14 @@ router.post('/', authenticateToken, async (req, res) => {
     };
 
     const validatedData = createMonitorSchema.parse(data);
+    
+    // Generate unique slug
+    const slug = await generateUniqueSlug(validatedData.name);
 
     const monitor = await prisma.monitor.create({
       data: {
         ...validatedData,
+        slug,
         status: 'paused' // Start paused, will be activated after creation
       },
       include: {
@@ -252,11 +285,14 @@ router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const data = updateMonitorSchema.parse(req.body);
+    
+    // Check if id is a UUID or a slug
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
     // Check if user has access to this monitor
     const existingMonitor = await prisma.monitor.findFirst({
       where: {
-        id,
+        ...(isUUID ? { id } : { slug: id }),
         workspace: {
           members: {
             some: { userId: req.user.id }
@@ -269,8 +305,13 @@ router.put('/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Monitor not found' });
     }
 
+    // If name is being updated, regenerate slug
+    if (data.name && data.name !== existingMonitor.name) {
+      data.slug = await generateUniqueSlug(data.name, existingMonitor.id);
+    }
+
     const monitor = await prisma.monitor.update({
-      where: { id },
+      where: { id: existingMonitor.id },
       data,
       include: {
         tags: true,

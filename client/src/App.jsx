@@ -39,8 +39,8 @@ function App() {
       {/* Protected routes */}
       <Route path="/dashboard" element={user ? <Layout><DashboardPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/monitors" element={user ? <Layout><MonitorsPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/monitors/:id" element={user ? <Layout><MonitorDetailPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/monitors/create" element={user ? <Layout><CreateMonitorPage /></Layout> : <Navigate to="/login" />} />
+      <Route path="/monitors/:id" element={user ? <Layout><MonitorDetailPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/monitors/:id/edit" element={user ? <Layout><CreateMonitorPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/incidents" element={user ? <Layout><IncidentsPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/incidents/:id" element={user ? <Layout><IncidentDetailPage /></Layout> : <Navigate to="/login" />} />

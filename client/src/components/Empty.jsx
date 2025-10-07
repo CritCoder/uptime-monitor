@@ -32,7 +32,7 @@ export function EmptyTitle({ children }) {
 
 export function EmptyDescription({ children }) {
   return (
-    <p className="text-sm text-gray-600 max-w-md">
+    <p className="px-6 pt-2 pb-4 text-center text-gray-500">
       {children}
     </p>
   )
@@ -40,9 +40,10 @@ export function EmptyDescription({ children }) {
 
 export function EmptyContent({ children }) {
   return (
-    <div className="mt-6">
+    <div className="mt-2">
       {children}
     </div>
   )
 }
+
 

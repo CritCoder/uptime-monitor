@@ -20,6 +20,7 @@ import incidentRoutes from './routes/incidents.js';
 import alertRoutes from './routes/alerts.js';
 import statusPageRoutes from './routes/statusPages.js';
 import webhookRoutes from './routes/webhooks.js';
+import workspaceRoutes from './routes/workspaces.js';
 import missingRoutes from './routes/missing.js';
 
 // Import services
@@ -98,6 +99,7 @@ app.use('/api/incidents', incidentRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/status-pages', statusPageRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/workspaces', workspaceRoutes);
 app.use('/api', missingRoutes);
 
 // Public status page routes

@@ -11,6 +11,12 @@ export default function AlertsPage() {
   const queryClient = useQueryClient()
   const { register, handleSubmit, reset, formState: { errors } } = useForm()
   
+  // Fetch user's workspace
+  const { data: workspaceData } = useQuery({
+    queryKey: ['user-workspace'],
+    queryFn: () => api.get('/auth/me').then(res => res.data),
+  })
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['alerts', page],
     queryFn: () => api.get(`/alerts/contacts?page=${page}`).then(res => res.data),
@@ -35,7 +41,19 @@ export default function AlertsPage() {
   })
 
   const onSubmit = (data) => {
-    createContactMutation.mutate(data)
+    // Add workspaceId to the data - get first workspace ID from user's workspaces
+    const workspaceId = workspaceData?.user?.workspaces?.[0]?.id
+    
+    if (!workspaceId) {
+      toast.error('No workspace found. Please contact support.')
+      return
+    }
+    
+    const contactData = {
+      ...data,
+      workspaceId
+    }
+    createContactMutation.mutate(contactData)
   }
 
   if (isLoading) {
@@ -136,7 +154,7 @@ export default function AlertsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Type</label>
-                <select {...register('type')} className="input mt-1">
+                <select {...register('type')} className="select mt-1">
                   <option value="email">Email</option>
                   <option value="sms">SMS</option>
                   <option value="slack">Slack</option>

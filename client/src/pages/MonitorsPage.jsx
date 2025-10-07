@@ -96,7 +96,11 @@ export default function MonitorsPage() {
         ) : (
           <div className="divide-y divide-gray-200">
             {data?.monitors?.map((monitor) => (
-              <div key={monitor.id} className="px-6 py-4 hover:bg-gray-50">
+              <Link
+                key={monitor.id}
+                to={`/monitors/${monitor.slug || monitor.id}`}
+                className="block px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <ServerIcon className="h-5 w-5 text-gray-400" />
@@ -112,15 +116,9 @@ export default function MonitorsPage() {
                     <span>{formatUptime(monitor.uptimePercentage || 0)}</span>
                     <span>{formatResponseTime(monitor.avgResponseTime || 0)}</span>
                     <span>{formatRelativeTime(monitor.lastCheckAt)}</span>
-                    <Link
-                      to={`/monitors/${monitor.id}`}
-                      className="text-primary-600 hover:text-primary-500"
-                    >
-                      View
-                    </Link>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
