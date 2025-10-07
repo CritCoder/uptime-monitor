@@ -79,16 +79,20 @@ router.post('/register', async (req, res) => {
       }
     });
 
-    // Send verification email
-    await sendEmail({
-      to: email,
-      subject: 'Verify your email address',
-      template: 'email-verification',
-      data: {
-        name,
-        verificationUrl: `${process.env.CLIENT_URL}/verify-email?token=${emailVerifyToken}`
-      }
-    });
+    // Send verification email (optional - won't fail registration if email service is not configured)
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Verify your email address',
+        template: 'email-verification',
+        data: {
+          name,
+          verificationUrl: `${process.env.CLIENT_URL}/verify-email?token=${emailVerifyToken}`
+        }
+      });
+    } catch (emailError) {
+      console.warn('Email sending failed (non-critical):', emailError.message);
+    }
 
     res.status(201).json({
       message: 'User created successfully. Please check your email to verify your account.',
@@ -228,16 +232,20 @@ router.post('/forgot-password', async (req, res) => {
       }
     });
 
-    // Send reset email
-    await sendEmail({
-      to: email,
-      subject: 'Reset your password',
-      template: 'password-reset',
-      data: {
-        name: user.name,
-        resetUrl: `${process.env.CLIENT_URL}/reset-password?token=${passwordResetToken}`
-      }
-    });
+    // Send reset email (optional - won't fail if email service is not configured)
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Reset your password',
+        template: 'password-reset',
+        data: {
+          name: user.name,
+          resetUrl: `${process.env.CLIENT_URL}/reset-password?token=${passwordResetToken}`
+        }
+      });
+    } catch (emailError) {
+      console.warn('Email sending failed (non-critical):', emailError.message);
+    }
 
     res.json({ message: 'If an account with that email exists, a password reset link has been sent.' });
   } catch (error) {
