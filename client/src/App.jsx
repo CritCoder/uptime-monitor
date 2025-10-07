@@ -20,6 +20,7 @@ import SettingsPage from './pages/SettingsPage'
 import PublicStatusPage from './pages/PublicStatusPage'
 import DocsPage from './pages/DocsPage'
 import AdminPage from './pages/AdminPage'
+import VerifyEmailPage from './pages/VerifyEmailPage'
 import LoadingSpinner from './components/LoadingSpinner'
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
       <Route path="/" element={!user ? <LandingPage /> : <Navigate to="/dashboard" />} />
       <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/dashboard" />} />
       <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/dashboard" />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/docs" element={<DocsPage />} />
       <Route path="/status/:slug" element={<PublicStatusPage />} />
       
