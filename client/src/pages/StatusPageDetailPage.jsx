@@ -153,7 +153,11 @@ export default function StatusPageDetailPage() {
   }
 
   if (!isCreateMode && isLoading) {
-    return <LoadingSpinner />
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner size="lg" />
+      </div>
+    )
   }
   
   if (!isCreateMode && error) {
