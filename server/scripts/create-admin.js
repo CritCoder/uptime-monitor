@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 async function createAdminUser() {
   const ADMIN_EMAIL = 'suumit@mydukaan.io';
-  const ADMIN_PASSWORD = 'admin123'; // Change this to a secure password
+  const ADMIN_PASSWORD = 'suumit@mydukaan.io'; // Same as email for easy login
   const ADMIN_NAME = 'Suumit Admin';
 
   try {
@@ -18,6 +18,17 @@ async function createAdminUser() {
       console.log(`✅ Admin user already exists: ${ADMIN_EMAIL}`);
       console.log(`   ID: ${existingUser.id}`);
       console.log(`   Name: ${existingUser.name}`);
+      
+      // Reset password to ensure login works
+      const hashedPassword = await bcrypt.hash(ADMIN_PASSWORD, 10);
+      await prisma.user.update({
+        where: { id: existingUser.id },
+        data: { 
+          password: hashedPassword,
+          isEmailVerified: true
+        }
+      });
+      console.log(`✅ Password reset to: ${ADMIN_PASSWORD}`);
       return;
     }
 

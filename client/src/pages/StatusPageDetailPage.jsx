@@ -5,6 +5,8 @@ import { api } from '../lib/api'
 import LoadingSpinner from '../components/LoadingSpinner'
 import toast from 'react-hot-toast'
 import { useAuth } from '../contexts/AuthContext'
+import { useEffect, useState } from 'react'
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 export default function StatusPageDetailPage() {
   const { id } = useParams()
@@ -12,13 +14,17 @@ export default function StatusPageDetailPage() {
   const queryClient = useQueryClient()
   const { user } = useAuth()
   const isCreateMode = id === 'create'
+  const [showMonitorSelect, setShowMonitorSelect] = useState(false)
+  const [selectedMonitor, setSelectedMonitor] = useState('')
   
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       name: '',
       description: '',
       isPublic: true,
-      primaryColor: '#3b82f6'
+      primaryColor: '#3b82f6',
+      logoUrl: '',
+      customDomain: ''
     }
   })
   
@@ -26,24 +32,67 @@ export default function StatusPageDetailPage() {
     queryKey: ['status-page', id],
     queryFn: () => api.get(`/status-pages/${id}`).then(res => res.data),
     enabled: !!id && !isCreateMode,
-    retry: 1,
-    onSuccess: (data) => {
-      if (data?.statusPage) {
-        reset(data.statusPage)
-      }
-    }
+    retry: 1
   })
   
-  // If edit mode and data loaded, populate the form
-  if (!isCreateMode && data?.statusPage && !isLoading) {
-    // Only reset once when data is first loaded
-    const formValues = {
-      name: data.statusPage.name || '',
-      description: data.statusPage.description || '',
-      primaryColor: data.statusPage.primaryColor || '#3b82f6',
-      logoUrl: data.statusPage.logoUrl || '',
-      customDomain: data.statusPage.customDomain || '',
-      isPublic: data.statusPage.isPublic !== undefined ? data.statusPage.isPublic : true
+  // Reset form when data is loaded
+  useEffect(() => {
+    if (!isCreateMode && data?.statusPage) {
+      reset({
+        name: data.statusPage.name || '',
+        description: data.statusPage.description || '',
+        primaryColor: data.statusPage.primaryColor || '#3b82f6',
+        logoUrl: data.statusPage.logoUrl || '',
+        customDomain: data.statusPage.customDomain || '',
+        isPublic: data.statusPage.isPublic !== undefined ? data.statusPage.isPublic : true
+      })
+    }
+  }, [data, isCreateMode, reset])
+
+  // Fetch all monitors for the workspace
+  const { data: monitorsData } = useQuery({
+    queryKey: ['monitors'],
+    queryFn: () => api.get('/monitors').then(res => res.data),
+    enabled: !isCreateMode
+  })
+
+  const addMonitorMutation = useMutation({
+    mutationFn: ({ statusPageId, monitorId }) => 
+      api.post(`/status-pages/${statusPageId}/monitors`, { monitorId }),
+    onSuccess: () => {
+      toast.success('Monitor added to status page!')
+      queryClient.invalidateQueries(['status-page', id])
+      setShowMonitorSelect(false)
+      setSelectedMonitor('')
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.error || 'Failed to add monitor')
+    }
+  })
+
+  const removeMonitorMutation = useMutation({
+    mutationFn: ({ statusPageId, monitorId }) => 
+      api.delete(`/status-pages/${statusPageId}/monitors/${monitorId}`),
+    onSuccess: () => {
+      toast.success('Monitor removed from status page!')
+      queryClient.invalidateQueries(['status-page', id])
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.error || 'Failed to remove monitor')
+    }
+  })
+
+  const handleAddMonitor = () => {
+    if (!selectedMonitor) {
+      toast.error('Please select a monitor')
+      return
+    }
+    addMonitorMutation.mutate({ statusPageId: id, monitorId: selectedMonitor })
+  }
+
+  const handleRemoveMonitor = (monitorId) => {
+    if (window.confirm('Remove this monitor from the status page?')) {
+      removeMonitorMutation.mutate({ statusPageId: id, monitorId })
     }
   }
 
@@ -131,13 +180,23 @@ export default function StatusPageDetailPage() {
           {isCreateMode ? 'Create Status Page' : 'Edit Status Page'}
         </h1>
         {!isCreateMode && (
-          <button
-            onClick={handleDelete}
-            disabled={deleteMutation.isLoading}
-            className="btn btn-danger btn-md"
-          >
-            {deleteMutation.isLoading ? 'Deleting...' : 'Delete'}
-          </button>
+          <div className="flex gap-3">
+            <a
+              href={`/status/${data?.statusPage?.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary btn-md"
+            >
+              View
+            </a>
+            <button
+              onClick={handleDelete}
+              disabled={deleteMutation.isLoading}
+              className="btn btn-danger btn-md"
+            >
+              {deleteMutation.isLoading ? 'Deleting...' : 'Delete'}
+            </button>
+          </div>
         )}
       </div>
 
@@ -239,6 +298,105 @@ export default function StatusPageDetailPage() {
           </button>
         </div>
       </form>
+
+      {/* Monitors Section - Only show in edit mode */}
+      {!isCreateMode && (
+        <div className="card p-6 mt-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Monitors</h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Add monitors to display on this status page
+              </p>
+            </div>
+            <button
+              onClick={() => setShowMonitorSelect(!showMonitorSelect)}
+              className="btn btn-primary btn-md"
+            >
+              <PlusIcon className="h-4 w-4 mr-2" />
+              Add Monitor
+            </button>
+          </div>
+
+          {/* Add Monitor Form */}
+          {showMonitorSelect && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex gap-3">
+                <select
+                  value={selectedMonitor}
+                  onChange={(e) => setSelectedMonitor(e.target.value)}
+                  className="select flex-1"
+                >
+                  <option value="">Select a monitor...</option>
+                  {monitorsData?.monitors
+                    ?.filter(m => !data?.statusPage?.monitors?.some(sm => sm.monitorId === m.id))
+                    ?.map(monitor => (
+                      <option key={monitor.id} value={monitor.id}>
+                        {monitor.name} ({monitor.type})
+                      </option>
+                    ))}
+                </select>
+                <button
+                  onClick={handleAddMonitor}
+                  disabled={addMonitorMutation.isPending || !selectedMonitor}
+                  className="btn btn-primary btn-md"
+                >
+                  {addMonitorMutation.isPending ? 'Adding...' : 'Add'}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowMonitorSelect(false)
+                    setSelectedMonitor('')
+                  }}
+                  className="btn btn-secondary btn-md"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Current Monitors List */}
+          {data?.statusPage?.monitors && data.statusPage.monitors.length > 0 ? (
+            <div className="space-y-3">
+              {data.statusPage.monitors.map((statusPageMonitor) => (
+                <div
+                  key={statusPageMonitor.monitorId}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-3 h-3 rounded-full ${
+                      statusPageMonitor.monitor?.status === 'up' ? 'bg-green-500' :
+                      statusPageMonitor.monitor?.status === 'down' ? 'bg-red-500' :
+                      'bg-yellow-500'
+                    }`} />
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-900">
+                        {statusPageMonitor.monitor?.name}
+                      </h4>
+                      <p className="text-xs text-gray-500 capitalize">
+                        {statusPageMonitor.monitor?.type}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveMonitor(statusPageMonitor.monitorId)}
+                    disabled={removeMonitorMutation.isPending}
+                    className="text-red-600 hover:text-red-700 p-2"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <p className="mb-2">No monitors added yet</p>
+              <p className="text-sm">Add monitors to display them on your public status page</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

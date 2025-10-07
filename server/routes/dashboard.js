@@ -49,6 +49,33 @@ router.get('/', authenticateToken, async (req, res) => {
       ? monitors.reduce((sum, m) => sum + (m.avgResponseTime || 0), 0) / monitors.length
       : 0;
 
+    // Fetch recent checks for response time trend (last 50 checks across all monitors)
+    const recentChecks = await prisma.check.findMany({
+      where: {
+        monitor: {
+          workspaceId: userWorkspace.workspaceId
+        }
+      },
+      orderBy: { checkedAt: 'desc' },
+      take: 50,
+      select: {
+        responseTime: true,
+        status: true,
+        checkedAt: true
+      }
+    });
+
+    // Format response time data for chart
+    const responseTimeData = recentChecks.reverse().map(check => ({
+      time: new Date(check.checkedAt).toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+      }),
+      responseTime: check.responseTime || 0,
+      status: check.status
+    }));
+
     res.json({
       stats: {
         totalMonitors,
@@ -70,7 +97,7 @@ router.get('/', authenticateToken, async (req, res) => {
       })),
       incidents: [],
       uptimeData: [],
-      responseTimeData: []
+      responseTimeData
     });
   } catch (error) {
     console.error('Dashboard error:', error);

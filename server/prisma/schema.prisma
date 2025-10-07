@@ -202,6 +202,8 @@ model StatusPage {
   password        String?
   logoUrl         String?
   primaryColor    String?  @default("#3b82f6")
+  showTitle       Boolean  @default(true)
+  theme           String   @default("light") // light or dark
   workspaceId     String
   workspace       Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())
