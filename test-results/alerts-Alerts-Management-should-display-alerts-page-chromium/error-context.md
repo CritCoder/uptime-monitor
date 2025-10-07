@@ -1,0 +1,75 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - heading "Uptime Monitor" [level=1] [ref=e7]
+      - button "Demo Workspace admin" [ref=e9] [cursor=pointer]:
+        - generic [ref=e10] [cursor=pointer]:
+          - img [ref=e12] [cursor=pointer]
+          - generic [ref=e14] [cursor=pointer]:
+            - generic [ref=e15] [cursor=pointer]: Demo Workspace
+            - generic [ref=e16] [cursor=pointer]: admin
+        - img [ref=e17] [cursor=pointer]
+    - navigation [ref=e19]:
+      - link "Dashboard" [ref=e20] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e21] [cursor=pointer]
+        - text: Dashboard
+      - link "Monitors" [ref=e23] [cursor=pointer]:
+        - /url: /monitors
+        - img [ref=e24] [cursor=pointer]
+        - text: Monitors
+      - link "Incidents" [ref=e26] [cursor=pointer]:
+        - /url: /incidents
+        - img [ref=e27] [cursor=pointer]
+        - text: Incidents
+      - link "Alerts" [ref=e29] [cursor=pointer]:
+        - /url: /alerts
+        - img [ref=e30] [cursor=pointer]
+        - text: Alerts
+      - link "Status Pages" [ref=e32] [cursor=pointer]:
+        - /url: /status-pages
+        - img [ref=e33] [cursor=pointer]
+        - text: Status Pages
+      - link "Settings" [ref=e35] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e36] [cursor=pointer]
+        - text: Settings
+    - generic [ref=e39]:
+      - img [ref=e42]
+      - generic [ref=e44]:
+        - paragraph [ref=e45]: Demo User
+        - paragraph [ref=e46]: demo@uptime-monitor.com
+      - button "Logout" [ref=e47] [cursor=pointer]:
+        - img [ref=e48] [cursor=pointer]
+  - generic [ref=e50]:
+    - generic [ref=e57]: Connected
+    - main [ref=e58]:
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - heading "Alert Contacts" [level=1] [ref=e63]
+            - paragraph [ref=e64]: Manage notification channels
+          - button "Add Contact" [ref=e65] [cursor=pointer]:
+            - img [ref=e66] [cursor=pointer]
+            - text: Add Contact
+        - generic [ref=e68]:
+          - heading "All Contacts" [level=3] [ref=e70]
+          - generic [ref=e71]:
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - img [ref=e75]
+                - generic [ref=e77]:
+                  - heading "Slack Webhook" [level=4] [ref=e78]
+                  - paragraph [ref=e79]: slack • https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+              - generic [ref=e81]: Active
+            - generic [ref=e83]:
+              - generic [ref=e84]:
+                - img [ref=e85]
+                - generic [ref=e87]:
+                  - heading "Email Alert" [level=4] [ref=e88]
+                  - paragraph [ref=e89]: email • demo@uptime-monitor.com
+              - generic [ref=e91]: Active
+```

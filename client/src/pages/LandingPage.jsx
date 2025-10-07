@@ -136,7 +136,7 @@ export default function LandingPage() {
               to="/login" 
               className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors"
             >
-              Log in
+              Login
             </Link>
             <Link 
               to="/register" 
@@ -199,7 +199,7 @@ export default function LandingPage() {
                       to="/login"
                       className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                     >
-                      Log in
+                      Login
                     </Link>
                     <Link
                       to="/register"
@@ -377,7 +377,7 @@ export default function LandingPage() {
                 Start monitoring for free
               </Link>
               <Link to="/login" className="text-sm font-semibold leading-6 text-white">
-                Log in <span aria-hidden="true">→</span>
+                Login <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>

@@ -21,10 +21,17 @@ export default function RegisterPage() {
         toast.success(result.message || 'Registration successful! Please check your email to verify your account.')
         navigate('/login')
       } else {
-        toast.error(result.error)
+        // Show detailed error message
+        const errorMsg = result.error || 'Registration failed. Please try again.'
+        if (typeof result.error === 'object' && result.error.details) {
+          toast.error(result.error.details.map(d => d.message).join(', '))
+        } else {
+          toast.error(errorMsg)
+        }
       }
     } catch (error) {
-      toast.error('An unexpected error occurred')
+      console.error('Registration error:', error)
+      toast.error(error.message || 'An unexpected error occurred')
     } finally {
       setLoading(false)
     }

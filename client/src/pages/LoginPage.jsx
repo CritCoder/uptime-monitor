@@ -19,10 +19,11 @@ export default function LoginPage() {
         toast.success('Login successful!')
         navigate('/dashboard')
       } else {
-        toast.error(result.error)
+        toast.error(result.error || 'Login failed. Please check your credentials.')
       }
     } catch (error) {
-      toast.error('An unexpected error occurred')
+      console.error('Login error:', error)
+      toast.error(error.message || 'An unexpected error occurred')
     } finally {
       setLoading(false)
     }

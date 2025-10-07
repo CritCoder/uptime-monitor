@@ -1,0 +1,145 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - heading "Uptime Monitor" [level=1] [ref=e7]
+        - button "Demo Workspace admin" [ref=e9] [cursor=pointer]:
+          - generic [ref=e10] [cursor=pointer]:
+            - img [ref=e12] [cursor=pointer]
+            - generic [ref=e14] [cursor=pointer]:
+              - generic [ref=e15] [cursor=pointer]: Demo Workspace
+              - generic [ref=e16] [cursor=pointer]: admin
+          - img [ref=e17] [cursor=pointer]
+      - navigation [ref=e19]:
+        - link "Dashboard" [ref=e20] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e21] [cursor=pointer]
+          - text: Dashboard
+        - link "Monitors" [ref=e23] [cursor=pointer]:
+          - /url: /monitors
+          - img [ref=e24] [cursor=pointer]
+          - text: Monitors
+        - link "Incidents" [ref=e26] [cursor=pointer]:
+          - /url: /incidents
+          - img [ref=e27] [cursor=pointer]
+          - text: Incidents
+        - link "Alerts" [ref=e29] [cursor=pointer]:
+          - /url: /alerts
+          - img [ref=e30] [cursor=pointer]
+          - text: Alerts
+        - link "Status Pages" [ref=e32] [cursor=pointer]:
+          - /url: /status-pages
+          - img [ref=e33] [cursor=pointer]
+          - text: Status Pages
+        - link "Settings" [ref=e35] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e36] [cursor=pointer]
+          - text: Settings
+      - generic [ref=e39]:
+        - img [ref=e42]
+        - generic [ref=e44]:
+          - paragraph [ref=e45]: Demo User
+          - paragraph [ref=e46]: demo@uptime-monitor.com
+        - button "Logout" [ref=e47] [cursor=pointer]:
+          - img [ref=e48] [cursor=pointer]
+    - generic [ref=e50]:
+      - generic [ref=e57]: Connected
+      - main [ref=e58]:
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - heading "Dashboard" [level=1] [ref=e63]
+              - paragraph [ref=e64]: Monitor your services and track uptime
+            - generic [ref=e65]:
+              - combobox [ref=e66]:
+                - option "Last hour"
+                - option "Last 24 hours" [selected]
+                - option "Last 7 days"
+                - option "Last 30 days"
+              - link "Add Monitor" [ref=e67] [cursor=pointer]:
+                - /url: /monitors/create
+          - generic [ref=e68]:
+            - generic [ref=e70]:
+              - img [ref=e72]
+              - generic [ref=e75]:
+                - term [ref=e76]: Total Monitors
+                - definition [ref=e77]: "4"
+            - generic [ref=e79]:
+              - img [ref=e81]
+              - generic [ref=e84]:
+                - term [ref=e85]: Up Monitors
+                - definition [ref=e86]: "4"
+            - generic [ref=e88]:
+              - img [ref=e90]
+              - generic [ref=e93]:
+                - term [ref=e94]: Down Monitors
+                - definition [ref=e95]: "0"
+            - generic [ref=e97]:
+              - img [ref=e99]
+              - generic [ref=e102]:
+                - term [ref=e103]: Avg Response Time
+                - definition [ref=e104]: 345ms
+          - generic [ref=e105]:
+            - generic [ref=e106]:
+              - heading "Uptime Trend" [level=3] [ref=e107]
+              - img [ref=e111]:
+                - generic [ref=e116]:
+                  - generic [ref=e119]: "0"
+                  - generic [ref=e122]: "25"
+                  - generic [ref=e125]: "50"
+                  - generic [ref=e128]: "75"
+                  - generic [ref=e131]: "100"
+            - generic [ref=e132]:
+              - heading "Response Time Trend" [level=3] [ref=e133]
+              - img [ref=e137]
+          - generic [ref=e141]:
+            - generic [ref=e143]:
+              - heading "Recent Monitors" [level=3] [ref=e144]
+              - link "View all" [ref=e145] [cursor=pointer]:
+                - /url: /monitors
+            - generic [ref=e146]:
+              - generic [ref=e148]:
+                - generic [ref=e149]:
+                  - generic [ref=e150]: up
+                  - generic [ref=e151]:
+                    - heading "Cloudflare DNS" [level=4] [ref=e152]
+                    - paragraph [ref=e153]: 1.1.1.1
+                - generic [ref=e154]:
+                  - generic [ref=e155]: 100.00%
+                  - generic [ref=e156]: 11ms
+                  - generic [ref=e157]: 2 minutes ago
+              - generic [ref=e159]:
+                - generic [ref=e160]:
+                  - generic [ref=e161]: up
+                  - generic [ref=e162]:
+                    - heading "SSH Port Check" [level=4] [ref=e163]
+                    - paragraph [ref=e164]: github.com
+                - generic [ref=e165]:
+                  - generic [ref=e166]: 100.00%
+                  - generic [ref=e167]: 53ms
+                  - generic [ref=e168]: 2 minutes ago
+              - generic [ref=e170]:
+                - generic [ref=e171]:
+                  - generic [ref=e172]: up
+                  - generic [ref=e173]:
+                    - heading "GitHub" [level=4] [ref=e174]
+                    - paragraph [ref=e175]: https://github.com
+                - generic [ref=e176]:
+                  - generic [ref=e177]: 100.00%
+                  - generic [ref=e178]: 730ms
+                  - generic [ref=e179]: 2 minutes ago
+              - generic [ref=e181]:
+                - generic [ref=e182]:
+                  - generic [ref=e183]: up
+                  - generic [ref=e184]:
+                    - heading "Google" [level=4] [ref=e185]
+                    - paragraph [ref=e186]: https://www.google.com
+                - generic [ref=e187]:
+                  - generic [ref=e188]: 100.00%
+                  - generic [ref=e189]: 587ms
+                  - generic [ref=e190]: 5 minutes ago
+  - generic [ref=e191]: "0"
+```
