@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import { PlusIcon, ServerIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, ServerIcon, ChartBarIcon } from '@heroicons/react/24/outline'
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '../components/Empty'
 
 export default function StatusPagesPage() {
   const [page, setPage] = useState(1)
@@ -53,8 +54,31 @@ export default function StatusPagesPage() {
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">All Status Pages</h3>
         </div>
-        <div className="divide-y divide-gray-200">
-          {data?.statusPages?.map((statusPage) => (
+        {data?.statusPages?.length === 0 ? (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <ChartBarIcon className="w-16 h-16 text-gray-400" />
+              </EmptyMedia>
+              <EmptyTitle>No Status Pages</EmptyTitle>
+              <EmptyDescription>
+                You haven't created any status pages yet.<br />
+                Create a public status page to keep your users informed.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Link
+                to="/status-pages/create"
+                className="btn btn-primary btn-md"
+              >
+                <PlusIcon className="h-4 w-4 mr-2" />
+                Create Your First Status Page
+              </Link>
+            </EmptyContent>
+          </Empty>
+        ) : (
+          <div className="divide-y divide-gray-200">
+            {data?.statusPages?.map((statusPage) => (
             <div key={statusPage.id} className="px-6 py-4 hover:bg-gray-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -84,8 +108,9 @@ export default function StatusPagesPage() {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

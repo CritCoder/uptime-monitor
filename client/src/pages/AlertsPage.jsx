@@ -96,13 +96,31 @@ export default function AlertsPage() {
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-medium text-gray-900">All Contacts</h3>
           </div>
-          <div className="divide-y divide-gray-200">
-            {data?.contacts?.length === 0 ? (
-              <div className="px-6 py-8 text-center text-gray-500">
-                No alert contacts yet. Click "Add Contact" to create one.
-              </div>
-            ) : (
-              data?.contacts?.map((contact) => (
+          {data?.contacts?.length === 0 ? (
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <BellIcon className="w-16 h-16 text-gray-400" />
+                </EmptyMedia>
+                <EmptyTitle>No Alert Contacts</EmptyTitle>
+                <EmptyDescription>
+                  You haven't added any notification contacts yet.<br />
+                  Get started by adding your first contact to receive alerts.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="btn btn-primary btn-md"
+                >
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Add Your First Contact
+                </button>
+              </EmptyContent>
+            </Empty>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {data?.contacts?.map((contact) => (
                 <div key={contact.id} className="px-6 py-4 hover:bg-gray-50">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
