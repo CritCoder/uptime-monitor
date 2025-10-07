@@ -46,6 +46,7 @@ function App() {
       <Route path="/incidents/:id" element={user ? <Layout><IncidentDetailPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/alerts" element={user ? <Layout><AlertsPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/status-pages" element={user ? <Layout><StatusPagesPage /></Layout> : <Navigate to="/login" />} />
+      <Route path="/status-pages/create" element={user ? <Layout><StatusPageDetailPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/status-pages/:id" element={user ? <Layout><StatusPageDetailPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/settings" element={user ? <Layout><SettingsPage /></Layout> : <Navigate to="/login" />} />
     </Routes>

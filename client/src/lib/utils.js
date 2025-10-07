@@ -23,25 +23,29 @@ export function formatDateTime(date) {
 }
 
 export function formatRelativeTime(date) {
+  if (!date) {
+    return 'Never'
+  }
+  
   const now = new Date()
   const diffInSeconds = Math.floor((now - new Date(date)) / 1000)
   
   if (diffInSeconds < 60) {
-    return `${diffInSeconds} seconds ago`
+    return `${diffInSeconds}s ago`
   }
   
   const diffInMinutes = Math.floor(diffInSeconds / 60)
   if (diffInMinutes < 60) {
-    return `${diffInMinutes} minutes ago`
+    return `${diffInMinutes}m ago`
   }
   
   const diffInHours = Math.floor(diffInMinutes / 60)
   if (diffInHours < 24) {
-    return `${diffInHours} hours ago`
+    return `${diffInHours}h ago`
   }
   
   const diffInDays = Math.floor(diffInHours / 24)
-  return `${diffInDays} days ago`
+  return `${diffInDays}d ago`
 }
 
 export function formatUptime(percentage) {

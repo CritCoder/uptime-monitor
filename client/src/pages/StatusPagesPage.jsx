@@ -43,10 +43,10 @@ export default function StatusPagesPage() {
           <h1 className="text-2xl font-bold text-gray-900">Status Pages</h1>
           <p className="text-gray-600">Create and manage public status pages</p>
         </div>
-        <button className="btn btn-primary btn-md">
+        <Link to="/status-pages/create" className="btn btn-primary btn-md">
           <PlusIcon className="h-4 w-4 mr-2" />
           Create Status Page
-        </button>
+        </Link>
       </div>
 
       <div className="card">

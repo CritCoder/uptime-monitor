@@ -257,7 +257,8 @@ router.post('/', authenticateToken, async (req, res) => {
       data: {
         ...validatedData,
         slug,
-        status: 'paused' // Start paused, will be activated after creation
+        status: 'up', // Start as up, will update after first check
+        isActive: true
       },
       include: {
         tags: true,
@@ -267,8 +268,8 @@ router.post('/', authenticateToken, async (req, res) => {
       }
     });
 
-    // Schedule initial check
-    await scheduleMonitorCheck(monitor.id, 5000); // Check after 5 seconds
+    // Schedule initial check immediately
+    await scheduleMonitorCheck(monitor.id, 1000); // Check after 1 second
 
     res.status(201).json({ monitor });
   } catch (error) {
