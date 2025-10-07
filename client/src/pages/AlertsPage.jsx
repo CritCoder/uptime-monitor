@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import { PlusIcon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, TrashIcon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '../components/Empty'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function AlertsPage() {
   const [page, setPage] = useState(1)
