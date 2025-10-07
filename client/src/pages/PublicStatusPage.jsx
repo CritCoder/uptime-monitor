@@ -1,28 +1,31 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { api } from '../lib/api'
 import { formatUptime, getStatusColor } from '../lib/utils'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 export default function PublicStatusPage() {
   const { slug } = useParams()
   
-  const { data, isLoading } = useQuery(
-    ['public-status-page', slug],
-    () => axios.get(`http://localhost:3000/status/public/${slug}`).then(res => res.data),
-    { enabled: !!slug }
-  )
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['public-status-page', slug],
+    queryFn: () => api.get(`/status-pages/public/${slug}`).then(res => res.data),
+    enabled: !!slug,
+    retry: 1
+  })
 
   if (isLoading) {
     return <LoadingSpinner />
   }
 
-  if (!data) {
+  if (error || !data) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">Status Page Not Found</h1>
-          <p className="text-gray-600">The requested status page could not be found.</p>
+          <p className="text-gray-600 mb-4">
+            {error?.response?.data?.error || 'The requested status page could not be found.'}
+          </p>
         </div>
       </div>
     )
