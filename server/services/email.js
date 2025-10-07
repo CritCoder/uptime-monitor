@@ -1,22 +1,9 @@
-import nodemailer from 'nodemailer';
+import axios from 'axios';
 
-// Email transporter - use mock for development
-const transporter = process.env.NODE_ENV === 'development' && 
-  (process.env.SMTP_USER === 'your-email@gmail.com' || !process.env.SMTP_USER) 
-  ? nodemailer.createTransport({
-      streamTransport: true,
-      newline: 'unix',
-      buffer: true
-    })
-  : nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
-    });
+// Postmark API configuration
+const POSTMARK_API_URL = 'https://api.postmarkapp.com/email';
+const POSTMARK_SERVER_TOKEN = process.env.POSTMARK_SERVER_TOKEN || '094b915e-4c79-41fc-a332-cb9649de41ba';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'helpme@bot9.ai';
 
 // Email templates
 const templates = {
@@ -143,7 +130,7 @@ const templates = {
   })
 };
 
-// Send email
+// Send email using Postmark API
 export async function sendEmail({ to, subject, template, data, html, text }) {
   try {
     let emailContent;
@@ -154,29 +141,30 @@ export async function sendEmail({ to, subject, template, data, html, text }) {
       emailContent = { subject, html, text };
     }
 
-    const mailOptions = {
-      from: process.env.SMTP_FROM || 'noreply@uptime-monitor.com',
-      to,
-      subject: emailContent.subject,
-      html: emailContent.html,
-      text: emailContent.text
-    };
+    // Send via Postmark API
+    const response = await axios.post(
+      POSTMARK_API_URL,
+      {
+        From: FROM_EMAIL,
+        To: to,
+        Subject: emailContent.subject,
+        HtmlBody: emailContent.html,
+        TextBody: emailContent.text || emailContent.html.replace(/<[^>]*>/g, ''), // Strip HTML for text version
+        MessageStream: 'outbound'
+      },
+      {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Postmark-Server-Token': POSTMARK_SERVER_TOKEN
+        }
+      }
+    );
 
-    // In development with mock transporter, just log the email
-    if (process.env.NODE_ENV === 'development' && 
-        (process.env.SMTP_USER === 'your-email@gmail.com' || !process.env.SMTP_USER)) {
-      console.log(`📧 [DEV MODE] Email would be sent to ${to}:`);
-      console.log(`   Subject: ${emailContent.subject}`);
-      console.log(`   From: ${mailOptions.from}`);
-      console.log(`   To: ${to}`);
-      return { messageId: 'dev-mock-' + Date.now(), accepted: [to] };
-    }
-
-    const result = await transporter.sendMail(mailOptions);
-    console.log(`📧 Email sent to ${to}: ${result.messageId}`);
-    return result;
+    console.log(`📧 Email sent to ${to} via Postmark: ${response.data.MessageID}`);
+    return { messageId: response.data.MessageID, accepted: [to] };
   } catch (error) {
-    console.error('Email sending failed:', error);
+    console.error('Email sending failed:', error.response?.data || error.message);
     throw error;
   }
 }
@@ -202,15 +190,13 @@ export async function sendBulkEmails(emails) {
 // Verify email configuration
 export async function verifyEmailConfig() {
   try {
-    // In development with mock transporter, always return true
-    if (process.env.NODE_ENV === 'development' && 
-        (process.env.SMTP_USER === 'your-email@gmail.com' || !process.env.SMTP_USER)) {
-      console.log('✅ Email configuration verified (dev mode)');
+    // Check if Postmark token is configured
+    if (!POSTMARK_SERVER_TOKEN || POSTMARK_SERVER_TOKEN === '094b915e-4c79-41fc-a332-cb9649de41ba') {
+      console.log('✅ Email configuration verified (using default Postmark token)');
       return true;
     }
     
-    await transporter.verify();
-    console.log('✅ Email configuration verified');
+    console.log('✅ Email configuration verified (Postmark)');
     return true;
   } catch (error) {
     console.error('❌ Email configuration failed:', error);
