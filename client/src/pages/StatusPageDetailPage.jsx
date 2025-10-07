@@ -179,10 +179,10 @@ export default function StatusPageDetailPage() {
         <h1 className="text-2xl font-bold text-gray-900">
           {isCreateMode ? 'Create Status Page' : 'Edit Status Page'}
         </h1>
-        {!isCreateMode && (
+        {!isCreateMode && data?.statusPage && (
           <div className="flex gap-3">
             <a
-              href={`/status/${data?.statusPage?.slug}`}
+              href={`/status/${data.statusPage.slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-secondary btn-md"
