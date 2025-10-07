@@ -33,4 +33,13 @@ api.interceptors.response.use(
   }
 )
 
+// Admin API functions
+export const adminApi = {
+  getAnalytics: (timeRange = '30d') => api.get(`/admin/analytics?timeRange=${timeRange}`),
+  getUsers: (params = {}) => api.get('/admin/users', { params }),
+  getUserDetails: (userId) => api.get(`/admin/users/${userId}`),
+  getWorkspaces: (params = {}) => api.get('/admin/workspaces', { params }),
+  getSystemStats: () => api.get('/admin/system-stats'),
+}
+
 export { api }

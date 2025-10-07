@@ -21,6 +21,7 @@ import alertRoutes from './routes/alerts.js';
 import statusPageRoutes from './routes/statusPages.js';
 import webhookRoutes from './routes/webhooks.js';
 import workspaceRoutes from './routes/workspaces.js';
+import adminRoutes from './routes/admin.js';
 import missingRoutes from './routes/missing.js';
 
 // Import services
@@ -49,7 +50,7 @@ export const prisma = new PrismaClient();
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 1000, // limit each IP to 1000 requests per windowMs (increased for development)
   message: 'Too many requests from this IP, please try again later.'
 });
 
@@ -100,6 +101,7 @@ app.use('/api/alerts', alertRoutes);
 app.use('/api/status-pages', statusPageRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/workspaces', workspaceRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api', missingRoutes);
 
 // Public status page routes

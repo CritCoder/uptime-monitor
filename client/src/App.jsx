@@ -19,6 +19,7 @@ import StatusPageDetailPage from './pages/StatusPageDetailPage'
 import SettingsPage from './pages/SettingsPage'
 import PublicStatusPage from './pages/PublicStatusPage'
 import DocsPage from './pages/DocsPage'
+import AdminPage from './pages/AdminPage'
 import LoadingSpinner from './components/LoadingSpinner'
 
 function App() {
@@ -51,6 +52,9 @@ function App() {
       <Route path="/status-pages/create" element={user ? <Layout><StatusPageDetailPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/status-pages/:id" element={user ? <Layout><StatusPageDetailPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/settings" element={user ? <Layout><SettingsPage /></Layout> : <Navigate to="/login" />} />
+      
+      {/* Admin route */}
+      <Route path="/admin" element={user ? <AdminPage /> : <Navigate to="/login" />} />
     </Routes>
   )
 }
