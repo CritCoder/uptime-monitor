@@ -8,11 +8,11 @@ const router = express.Router();
 // Validation schemas
 const createStatusPageSchema = z.object({
   name: z.string().min(1).max(100),
-  description: z.string().max(500).optional(),
-  customDomain: z.string().optional(),
+  description: z.string().max(500).optional().or(z.literal('')),
+  customDomain: z.string().optional().or(z.literal('')),
   isPublic: z.boolean().default(true),
-  password: z.string().optional(),
-  logoUrl: z.string().url().optional(),
+  password: z.string().optional().or(z.literal('')),
+  logoUrl: z.string().url().optional().or(z.literal('')),
   primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).default('#3b82f6'),
   workspaceId: z.string().uuid()
 });

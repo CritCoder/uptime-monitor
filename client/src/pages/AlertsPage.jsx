@@ -112,7 +112,7 @@ export default function AlertsPage() {
               </EmptyHeader>
               <EmptyContent>
                 <button
-                  onClick={() => setShowAddModal(true)}
+                  onClick={() => setShowModal(true)}
                   className="btn btn-primary btn-md"
                 >
                   <PlusIcon className="h-4 w-4 mr-2" />
