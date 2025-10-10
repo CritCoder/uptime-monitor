@@ -104,10 +104,15 @@ export default function StatusPageDetailPage() {
       }
       return api.post('/status-pages', { ...data, workspaceId })
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       toast.success('Status page created successfully!')
       queryClient.invalidateQueries(['status-pages'])
-      navigate('/status-pages')
+      // Navigate to the newly created status page's edit page
+      if (response.data?.statusPage?.id) {
+        navigate(`/status-pages/${response.data.statusPage.id}`)
+      } else {
+        navigate('/status-pages')
+      }
     },
     onError: (error) => {
       toast.error(error.response?.data?.error || 'Failed to create status page')
