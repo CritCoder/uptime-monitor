@@ -13,9 +13,11 @@ export default function StatusPageDetailPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { user } = useAuth()
-  const isCreateMode = id === 'create'
+  const isCreateMode = !id || id === 'create'
   const [showMonitorSelect, setShowMonitorSelect] = useState(false)
   const [selectedMonitor, setSelectedMonitor] = useState('')
+  
+  console.log('StatusPageDetailPage - id:', id, 'isCreateMode:', isCreateMode)
   
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
@@ -87,6 +89,10 @@ export default function StatusPageDetailPage() {
       toast.error('Please select a monitor')
       return
     }
+    if (!id || id === 'create') {
+      toast.error('Invalid status page ID')
+      return
+    }
     addMonitorMutation.mutate({ statusPageId: id, monitorId: selectedMonitor })
   }
 
@@ -105,12 +111,21 @@ export default function StatusPageDetailPage() {
       return api.post('/status-pages', { ...data, workspaceId })
     },
     onSuccess: (response) => {
-      toast.success('Status page created successfully!')
-      queryClient.invalidateQueries(['status-pages'])
-      // Navigate to the newly created status page's edit page
-      if (response.data?.statusPage?.id) {
-        navigate(`/status-pages/${response.data.statusPage.id}`)
+      console.log('Create response:', response)
+      const newStatusPageId = response.data?.statusPage?.id
+      console.log('New status page ID:', newStatusPageId)
+      if (newStatusPageId) {
+        // Pre-populate the cache with the new status page data
+        queryClient.setQueryData(['status-page', newStatusPageId], response.data)
+        toast.success('Status page created successfully!')
+        queryClient.invalidateQueries(['status-pages'])
+        // Navigate to the newly created status page's edit page
+        console.log('Navigating to:', `/status-pages/${newStatusPageId}`)
+        navigate(`/status-pages/${newStatusPageId}`)
       } else {
+        console.error('No status page ID in response!')
+        toast.success('Status page created successfully!')
+        queryClient.invalidateQueries(['status-pages'])
         navigate('/status-pages')
       }
     },
@@ -308,8 +323,8 @@ export default function StatusPageDetailPage() {
         </div>
       </form>
 
-      {/* Monitors Section - Only show in edit mode */}
-      {!isCreateMode && (
+      {/* Monitors Section - Only show in edit mode with valid data */}
+      {!isCreateMode && data?.statusPage && (
         <div className="card p-6 mt-6">
           <div className="flex items-center justify-between mb-6">
             <div>
