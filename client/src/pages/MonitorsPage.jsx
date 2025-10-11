@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import { formatUptime, formatResponseTime, getStatusColor, formatRelativeTime } from '../lib/utils'
@@ -7,11 +7,21 @@ import { PlusIcon, ServerIcon } from '@heroicons/react/24/outline'
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '../components/Empty'
 
 export default function MonitorsPage() {
+  const [searchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
   
+  // Read status filter from URL
+  useEffect(() => {
+    const status = searchParams.get('status')
+    if (status) {
+      setStatusFilter(status)
+    }
+  }, [searchParams])
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['monitors', page, search],
+    queryKey: ['monitors', page, search, statusFilter],
     queryFn: () => api.get(`/monitors?page=${page}&search=${search}`).then(res => res.data),
     refetchInterval: 30000,
     retry: 1,
@@ -39,6 +49,12 @@ export default function MonitorsPage() {
     )
   }
 
+  // Filter monitors by status
+  const filteredMonitors = data?.monitors?.filter(monitor => {
+    if (!statusFilter) return true
+    return monitor.status === statusFilter
+  }) || []
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -56,15 +72,59 @@ export default function MonitorsPage() {
         </Link>
       </div>
 
-      {/* Search */}
-      <div className="max-w-md">
-        <input
-          type="text"
-          placeholder="Search monitors..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="input"
-        />
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="Search monitors..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input"
+          />
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setStatusFilter('')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              statusFilter === ''
+                ? 'bg-primary-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setStatusFilter('up')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              statusFilter === 'up'
+                ? 'bg-green-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            Up
+          </button>
+          <button
+            onClick={() => setStatusFilter('down')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              statusFilter === 'down'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            Down
+          </button>
+          <button
+            onClick={() => setStatusFilter('paused')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              statusFilter === 'paused'
+                ? 'bg-yellow-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            Paused
+          </button>
+        </div>
       </div>
 
       {/* Monitors List */}
@@ -72,7 +132,7 @@ export default function MonitorsPage() {
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">All Monitors</h3>
         </div>
-        {data?.monitors?.length === 0 ? (
+        {filteredMonitors.length === 0 ? (
           <Empty>
             <EmptyHeader>
               <EmptyMedia>
@@ -95,7 +155,7 @@ export default function MonitorsPage() {
           </Empty>
         ) : (
           <div className="divide-y divide-gray-200">
-            {data?.monitors?.map((monitor) => (
+            {filteredMonitors.map((monitor) => (
               <Link
                 key={monitor.id}
                 to={`/monitors/${monitor.slug || monitor.id}`}

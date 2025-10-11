@@ -89,63 +89,95 @@ export default function DashboardPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="card p-6">
+        <Link
+          to="/monitors"
+          className="card p-6 hover:shadow-lg hover:scale-105 transition-all cursor-pointer group"
+        >
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <ServerIcon className="h-8 w-8 text-gray-400" />
+              <ServerIcon className="h-8 w-8 text-gray-400 group-hover:text-primary-600 transition-colors" />
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">Total Monitors</dt>
-                <dd className="text-3xl font-bold text-gray-900">{stats?.totalMonitors || 0}</dd>
+                <dt className="text-sm font-medium text-gray-500 truncate group-hover:text-gray-700">Total Monitors</dt>
+                <dd className="text-3xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">{stats?.totalMonitors || 0}</dd>
               </dl>
             </div>
+            <div className="ml-2 flex-shrink-0">
+              <svg className="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
           </div>
-        </div>
+        </Link>
 
-        <div className="card p-6">
+        <Link
+          to="/monitors?status=up"
+          className="card p-6 hover:shadow-lg hover:scale-105 transition-all cursor-pointer group"
+        >
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <CheckCircleIcon className="h-8 w-8 text-green-400" />
+              <CheckCircleIcon className="h-8 w-8 text-green-400 group-hover:text-green-600 transition-colors" />
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">Up Monitors</dt>
-                <dd className="text-3xl font-bold text-gray-900">{stats?.upMonitors || 0}</dd>
+                <dt className="text-sm font-medium text-gray-500 truncate group-hover:text-gray-700">Up Monitors</dt>
+                <dd className="text-3xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">{stats?.upMonitors || 0}</dd>
               </dl>
             </div>
+            <div className="ml-2 flex-shrink-0">
+              <svg className="h-5 w-5 text-gray-400 group-hover:text-green-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
           </div>
-        </div>
+        </Link>
 
-        <div className="card p-6">
+        <Link
+          to="/monitors?status=down"
+          className="card p-6 hover:shadow-lg hover:scale-105 transition-all cursor-pointer group"
+        >
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <ExclamationTriangleIcon className="h-8 w-8 text-red-400" />
+              <ExclamationTriangleIcon className="h-8 w-8 text-red-400 group-hover:text-red-600 transition-colors" />
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">Down Monitors</dt>
-                <dd className="text-3xl font-bold text-gray-900">{stats?.downMonitors || 0}</dd>
+                <dt className="text-sm font-medium text-gray-500 truncate group-hover:text-gray-700">Down Monitors</dt>
+                <dd className="text-3xl font-bold text-gray-900 group-hover:text-red-600 transition-colors">{stats?.downMonitors || 0}</dd>
               </dl>
             </div>
+            <div className="ml-2 flex-shrink-0">
+              <svg className="h-5 w-5 text-gray-400 group-hover:text-red-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
           </div>
-        </div>
+        </Link>
 
-        <div className="card p-6">
+        <Link
+          to="/monitors"
+          className="card p-6 hover:shadow-lg hover:scale-105 transition-all cursor-pointer group"
+        >
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <ClockIcon className="h-8 w-8 text-blue-400" />
+              <ClockIcon className="h-8 w-8 text-blue-400 group-hover:text-blue-600 transition-colors" />
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">Avg Response Time</dt>
-                <dd className="text-3xl font-bold text-gray-900">
+                <dt className="text-sm font-medium text-gray-500 truncate group-hover:text-gray-700">Avg Response Time</dt>
+                <dd className="text-3xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                   {formatResponseTime(stats?.avgResponseTime || 0)}
                 </dd>
               </dl>
             </div>
+            <div className="ml-2 flex-shrink-0">
+              <svg className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Charts */}
