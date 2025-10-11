@@ -1,0 +1,20 @@
+# Test reports and artifacts
+reports/
+*.log
+.test-results/
+screenshots/
+videos/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.temp
+

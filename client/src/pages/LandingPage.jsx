@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { 
-  CheckIcon, 
   ServerIcon, 
   ChartBarIcon, 
   BellIcon,
@@ -11,14 +10,22 @@ import {
   XMarkIcon,
   ArrowTrendingUpIcon,
   GlobeAltIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  CheckCircleIcon,
+  SparklesIcon,
+  RocketLaunchIcon,
+  CogIcon,
+  BoltIcon,
+  LockClosedIcon
 } from '@heroicons/react/24/outline'
+import PricingSection from '../components/PricingSection'
 
 const navigation = [
   { name: 'Features', href: '#features', type: 'scroll' },
+  { name: 'How It Works', href: '#how-it-works', type: 'scroll' },
+  { name: 'Integrations', href: '#integrations', type: 'scroll' },
+  { name: 'Testimonials', href: '#testimonials', type: 'scroll' },
   { name: 'Pricing', href: '#pricing', type: 'scroll' },
-  { name: 'Documentation', href: '/docs', type: 'link' },
-  { name: 'Status', href: '/status/demo-status', type: 'link' },
 ]
 
 const features = [
@@ -54,50 +61,74 @@ const features = [
   },
 ]
 
-const plans = [
+const integrations = [
+  { name: 'Slack', logo: '💬', description: 'Real-time alerts in your channels' },
+  { name: 'Discord', logo: '🎮', description: 'Monitor notifications for your team' },
+  { name: 'PagerDuty', logo: '📟', description: 'On-call incident management' },
+  { name: 'Webhook', logo: '🔗', description: 'Custom integrations' },
+  { name: 'Email', logo: '📧', description: 'Email notifications' },
+  { name: 'SMS', logo: '📱', description: 'Text message alerts' },
+]
+
+const testimonials = [
   {
-    name: 'Free',
-    price: '$0',
-    description: 'Perfect for personal projects',
-    features: [
-      '5 monitors',
-      '5-minute intervals',
-      'Email alerts',
-      'Basic status page',
-      '30-day history'
-    ],
-    cta: 'Get Started',
-    popular: false,
+    content: 'Uptime Monitor has been a game-changer for our team. The real-time alerts and beautiful status pages have saved us countless hours.',
+    author: 'Sarah Johnson',
+    role: 'CTO at TechCorp',
+    avatar: '👩‍💼'
   },
   {
-    name: 'Starter',
-    price: '$9',
-    description: 'Great for small teams',
-    features: [
-      '20 monitors',
-      '1-minute intervals',
-      'All alert types',
-      'Custom status pages',
-      '90-day history',
-      'Team collaboration'
-    ],
-    cta: 'Start Free Trial',
-    popular: true,
+    content: 'The best monitoring solution we have used. Setup was incredibly easy and the dashboard provides all the insights we need.',
+    author: 'Michael Chen',
+    role: 'DevOps Lead at StartupXYZ',
+    avatar: '👨‍💻'
   },
   {
-    name: 'Pro',
-    price: '$29',
-    description: 'For growing businesses',
-    features: [
-      '100 monitors',
-      '30-second intervals',
-      'Advanced analytics',
-      'Unlimited status pages',
-      '1-year history',
-      'Priority support'
-    ],
-    cta: 'Start Free Trial',
-    popular: false,
+    content: 'Outstanding support and reliability. Our uptime has improved significantly since switching to this platform.',
+    author: 'Emily Rodriguez',
+    role: 'Engineering Manager at CloudCo',
+    avatar: '👩‍🔬'
+  },
+]
+
+const useCases = [
+  {
+    icon: RocketLaunchIcon,
+    title: 'Startups',
+    description: 'Launch with confidence knowing your services are being monitored 24/7.'
+  },
+  {
+    icon: BoltIcon,
+    title: 'SaaS Companies',
+    description: 'Keep your customers informed with real-time status updates.'
+  },
+  {
+    icon: ShieldCheckIcon,
+    title: 'Enterprises',
+    description: 'Meet SLA requirements with enterprise-grade monitoring and reporting.'
+  },
+  {
+    icon: CogIcon,
+    title: 'Agencies',
+    description: 'Monitor all your client websites from a single dashboard.'
+  },
+]
+
+const howItWorks = [
+  {
+    step: '1',
+    title: 'Add Your Monitors',
+    description: 'Enter the URLs of your websites, APIs, or services you want to monitor.',
+  },
+  {
+    step: '2',
+    title: 'Configure Alerts',
+    description: 'Set up notification channels and alert rules that work for your team.',
+  },
+  {
+    step: '3',
+    title: 'Stay Informed',
+    description: 'Receive instant notifications and view detailed analytics on your dashboard.',
   },
 ]
 
@@ -106,7 +137,7 @@ export default function LandingPage() {
 
   return (
     <div className="bg-white">
-      {/* Header */}
+      {/* 1. Header/Navigation */}
       <header className="absolute inset-x-0 top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
         <nav className="flex items-center justify-between p-6 lg:px-8 max-w-7xl mx-auto" aria-label="Global">
           <div className="flex lg:flex-1">
@@ -246,8 +277,12 @@ export default function LandingPage() {
         )}
       </header>
 
-      {/* Hero section */}
+      {/* 2. Hero Section */}
       <div className="relative isolate px-6 pt-14 lg:px-8">
+        <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+          <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-primary-400 to-purple-400 opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
+        </div>
+        
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
@@ -268,11 +303,23 @@ export default function LandingPage() {
                 View demo status page <span aria-hidden="true">→</span>
               </Link>
             </div>
+            
+            {/* Trust badges */}
+            <div className="mt-10 flex items-center justify-center gap-x-8 text-sm text-gray-600">
+              <div className="flex items-center gap-x-2">
+                <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                <span>No credit card required</span>
+              </div>
+              <div className="flex items-center gap-x-2">
+                <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                <span>14-day free trial</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Stats Section */}
+      {/* 3. Stats Section */}
       <div className="bg-gray-50 py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 text-center">
@@ -301,7 +348,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Features section */}
+      {/* 4. Features Section */}
       <div id="features" className="py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
@@ -331,66 +378,220 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Pricing section */}
-      <div id="pricing" className="bg-gray-50 py-24 sm:py-32 pb-32">
+      {/* 5. How It Works Section */}
+      <div id="how-it-works" className="bg-gray-50 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl text-center">
-            <h2 className="text-base font-semibold leading-7 text-primary-600">Pricing</h2>
-            <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-              Choose the right plan for you
+          <div className="mx-auto max-w-2xl lg:text-center">
+            <h2 className="text-base font-semibold leading-7 text-primary-600">Simple Setup</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              How it works
             </p>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              Start with our free plan and scale as you grow. All plans include a 14-day free trial.
+              Get started in minutes with our simple three-step process.
             </p>
           </div>
-          <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3 pb-4">
-            {plans.map((plan, planIdx) => (
-              <div
-                key={plan.name}
-                className={`flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10 ${
-                  plan.popular ? 'ring-2 ring-primary-600 shadow-lg' : ''
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-x-4">
-                    <h3 className="text-lg font-semibold leading-8 text-gray-900">{plan.name}</h3>
-                    {plan.popular && (
-                      <p className="rounded-full bg-primary-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-primary-600">
-                        Most popular
-                      </p>
-                    )}
+          
+          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-3">
+              {howItWorks.map((item, index) => (
+                <div key={item.step} className="relative">
+                  <div className="flex items-center gap-x-4 mb-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-600 text-white text-xl font-bold">
+                      {item.step}
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900">{item.title}</h3>
                   </div>
-                  <p className="mt-4 text-sm leading-6 text-gray-600">{plan.description}</p>
-                  <p className="mt-6 flex items-baseline gap-x-1">
-                    <span className="text-4xl font-bold tracking-tight text-gray-900">{plan.price}</span>
-                    <span className="text-sm font-semibold leading-6 text-gray-600">/month</span>
-                  </p>
-                  <ul className="mt-8 space-y-3 text-sm leading-6 text-gray-600">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex gap-x-3">
-                        <CheckIcon className="h-6 w-5 flex-none text-primary-600" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-base text-gray-600">{item.description}</p>
+                  {index < howItWorks.length - 1 && (
+                    <div className="hidden lg:block absolute top-6 left-full w-full h-0.5 bg-gray-200" style={{ width: 'calc(100% - 3rem)', marginLeft: '1.5rem' }} />
+                  )}
                 </div>
-                <Link
-                  to="/register"
-                  className={`mt-8 block rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                    plan.popular
-                      ? 'bg-primary-600 text-white shadow-sm hover:bg-primary-500 focus-visible:outline-primary-600'
-                      : 'ring-1 ring-inset ring-gray-200 text-primary-600 hover:ring-primary-600'
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 6. Use Cases Section */}
+      <div id="use-cases" className="py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl lg:text-center">
+            <h2 className="text-base font-semibold leading-7 text-primary-600">For every team</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Built for teams of all sizes
+            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">
+              From startups to enterprises, our monitoring solution scales with your needs.
+            </p>
+          </div>
+          
+          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
+              {useCases.map((useCase) => (
+                <div key={useCase.title} className="flex flex-col items-center text-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-100 mb-4">
+                    <useCase.icon className="h-8 w-8 text-primary-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{useCase.title}</h3>
+                  <p className="text-sm text-gray-600">{useCase.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 7. Integrations Section */}
+      <div id="integrations" className="bg-gray-50 py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl lg:text-center">
+            <h2 className="text-base font-semibold leading-7 text-primary-600">Integrations</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Connect with your favorite tools
+            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">
+              Seamlessly integrate with the tools you already use every day.
+            </p>
+          </div>
+          
+          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-3">
+              {integrations.map((integration) => (
+                <div key={integration.name} className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                  <div className="text-4xl mb-3">{integration.logo}</div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{integration.name}</h3>
+                  <p className="text-sm text-gray-600 text-center">{integration.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 8. Testimonials Section */}
+      <div id="testimonials" className="py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl lg:text-center mb-16">
+            <h2 className="text-base font-semibold leading-7 text-primary-600">Testimonials</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Loved by developers worldwide
+            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">
+              See what our customers have to say about Uptime Monitor.
+            </p>
+          </div>
+          
+          <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className="flex flex-col justify-between bg-white p-8 shadow-lg rounded-2xl">
+                <div>
+                  <div className="flex gap-x-1 text-primary-600 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-gray-700 mb-6">{testimonial.content}</p>
+                </div>
+                <div className="flex items-center gap-x-3">
+                  <div className="text-3xl">{testimonial.avatar}</div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{testimonial.author}</p>
+                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* CTA Section */}
+      {/* 9. Security Section */}
+      <div id="security" className="bg-gray-50 py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl lg:text-center">
+            <h2 className="text-base font-semibold leading-7 text-primary-600">Security & Compliance</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Enterprise-grade security
+            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">
+              Your data is protected with industry-leading security standards.
+            </p>
+          </div>
+          
+          <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-3">
+              <div className="flex flex-col items-center text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-100 mb-4">
+                  <LockClosedIcon className="h-8 w-8 text-primary-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">SSL/TLS Encryption</h3>
+                <p className="text-sm text-gray-600">All data transmitted is encrypted using industry-standard SSL/TLS protocols.</p>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-100 mb-4">
+                  <ShieldCheckIcon className="h-8 w-8 text-primary-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">SOC 2 Compliant</h3>
+                <p className="text-sm text-gray-600">We follow strict security standards to protect your data and privacy.</p>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-100 mb-4">
+                  <ServerIcon className="h-8 w-8 text-primary-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">99.9% Uptime</h3>
+                <p className="text-sm text-gray-600">Our infrastructure is built for reliability with redundancy across multiple data centers.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 10. Pricing Section */}
+      <PricingSection />
+
+      {/* 11. FAQ Section */}
+      <div id="faq" className="bg-gray-50 py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl lg:text-center">
+            <h2 className="text-base font-semibold leading-7 text-primary-600">FAQs</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Frequently asked questions
+            </p>
+            <p className="mt-6 text-lg leading-8 text-gray-600">
+              Have a different question? Contact our support team.
+            </p>
+          </div>
+          
+          <div className="mx-auto mt-16 max-w-3xl">
+            <dl className="space-y-8">
+              <div>
+                <dt className="text-lg font-semibold text-gray-900 mb-2">How often are checks performed?</dt>
+                <dd className="text-gray-600">Our monitoring checks run as frequently as every 30 seconds, depending on your plan. You can configure check intervals from 30 seconds to 24 hours.</dd>
+              </div>
+              <div>
+                <dt className="text-lg font-semibold text-gray-900 mb-2">What types of monitoring are supported?</dt>
+                <dd className="text-gray-600">We support HTTP/HTTPS, ping, port, SSL certificate, keyword, and API monitoring. Each type can be configured with custom timeout values and alert rules.</dd>
+              </div>
+              <div>
+                <dt className="text-lg font-semibold text-gray-900 mb-2">Can I cancel anytime?</dt>
+                <dd className="text-gray-600">Yes! There are no long-term contracts. You can upgrade, downgrade, or cancel your subscription at any time with no penalties.</dd>
+              </div>
+              <div>
+                <dt className="text-lg font-semibold text-gray-900 mb-2">Do you offer a free trial?</dt>
+                <dd className="text-gray-600">Yes, we offer a 14-day free trial on all paid plans. No credit card required to start your trial.</dd>
+              </div>
+              <div>
+                <dt className="text-lg font-semibold text-gray-900 mb-2">Where are your monitoring servers located?</dt>
+                <dd className="text-gray-600">We have monitoring nodes in 15+ locations worldwide, including North America, Europe, Asia, and Australia, ensuring global coverage and accuracy.</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      {/* 12. CTA Section */}
       <div className="bg-primary-600">
         <div className="mx-auto max-w-7xl px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
@@ -399,6 +600,7 @@ export default function LandingPage() {
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-primary-100">
               Join thousands of developers and businesses monitoring their services with Uptime Monitor.
+              Start your free trial today.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
@@ -411,11 +613,14 @@ export default function LandingPage() {
                 Login <span aria-hidden="true">→</span>
               </Link>
             </div>
+            <p className="mt-6 text-sm text-primary-200">
+              No credit card required • 14-day free trial • Cancel anytime
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
+      {/* 13. Footer */}
       <footer className="bg-gray-900">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
@@ -425,6 +630,7 @@ export default function LandingPage() {
                 <li><a href="#features" className="text-sm leading-6 text-gray-400 hover:text-white">Features</a></li>
                 <li><a href="#pricing" className="text-sm leading-6 text-gray-400 hover:text-white">Pricing</a></li>
                 <li><Link to="/status/demo-status" className="text-sm leading-6 text-gray-400 hover:text-white">Status Page</Link></li>
+                <li><a href="#security" className="text-sm leading-6 text-gray-400 hover:text-white">Security</a></li>
               </ul>
             </div>
             <div>
@@ -433,14 +639,16 @@ export default function LandingPage() {
                 <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">About</a></li>
                 <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Blog</a></li>
                 <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Careers</a></li>
+                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Press</a></li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold leading-6 text-white">Resources</h3>
               <ul className="mt-6 space-y-4">
-                <li><a href="#docs" className="text-sm leading-6 text-gray-400 hover:text-white">Documentation</a></li>
+                <li><Link to="/docs" className="text-sm leading-6 text-gray-400 hover:text-white">Documentation</Link></li>
                 <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">API Reference</a></li>
                 <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Help Center</a></li>
+                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Community</a></li>
               </ul>
             </div>
             <div>
@@ -449,14 +657,37 @@ export default function LandingPage() {
                 <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Privacy</a></li>
                 <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Terms</a></li>
                 <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Security</a></li>
+                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Compliance</a></li>
               </ul>
             </div>
           </div>
-          <div className="mt-12 border-t border-gray-800 pt-8 flex flex-col sm:flex-row items-center justify-between">
-            <p className="text-xs leading-5 text-gray-400">
-              &copy; 2024 Uptime Monitor. All rights reserved.
-            </p>
-            <p className="text-xs leading-5 text-gray-400 mt-4 sm:mt-0">
+          <div className="mt-12 border-t border-gray-800 pt-8">
+            <div className="flex flex-col sm:flex-row items-center justify-between">
+              <p className="text-xs leading-5 text-gray-400">
+                &copy; 2024 Uptime Monitor. All rights reserved.
+              </p>
+              <div className="flex gap-x-6 mt-4 sm:mt-0">
+                <a href="#" className="text-gray-400 hover:text-gray-300">
+                  <span className="sr-only">Twitter</span>
+                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                  </svg>
+                </a>
+                <a href="#" className="text-gray-400 hover:text-gray-300">
+                  <span className="sr-only">GitHub</span>
+                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                  </svg>
+                </a>
+                <a href="#" className="text-gray-400 hover:text-gray-300">
+                  <span className="sr-only">LinkedIn</span>
+                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+            <p className="text-xs text-center text-gray-400 mt-4">
               Built with ❤️ for developers
             </p>
           </div>

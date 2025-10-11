@@ -95,6 +95,7 @@ router.post('/register', async (req, res) => {
     }
 
     res.status(201).json({
+      success: true,
       message: 'User created successfully. Please check your email to verify your account.',
       user: {
         id: user.id,

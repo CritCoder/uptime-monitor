@@ -14,7 +14,16 @@
     "db:migrate": "cd server && npx prisma migrate dev",
     "db:generate": "cd server && npx prisma generate",
     "db:seed": "cd server && npx prisma db seed",
-    "db:studio": "cd server && npx prisma studio"
+    "db:studio": "cd server && npx prisma studio",
+    "test": "bash testing/run-tests.sh",
+    "test:headless": "bash testing/run-tests.sh --headless",
+    "test:auth": "playwright test testing/specs/auth.test.js",
+    "test:monitors": "playwright test testing/specs/monitors.test.js",
+    "test:dashboard": "playwright test testing/specs/dashboard.test.js",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "pre-deploy": "bash testing/pre-deploy.sh",
+    "deploy": "npm run pre-deploy && echo 'Tests passed! Ready to deploy to production.'"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.1",
