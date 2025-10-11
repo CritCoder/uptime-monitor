@@ -469,11 +469,11 @@ Updates: ${incident.updates?.map(u => `- ${u.message}`).join('\n') || 'No update
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful assistant that explains technical incidents in simple, non-technical language that anyone can understand. Be concise, clear, and empathetic. Use simple analogies when needed.'
+            content: 'You are a professional technical incident analyst. Provide formal, concise analysis with 3 sections: 1) SUMMARY: Brief technical explanation (2-3 sentences), 2) IMPACT: What users experienced, 3) RECOMMENDED ACTIONS: Specific steps to resolve or prevent this. Be professional and actionable.'
           },
           {
             role: 'user',
-            content: `Please explain this incident in simple, everyday language that a non-technical person can understand:\n\n${incidentContext}`
+            content: `Analyze this incident and provide a professional summary with recommended actions:\n\n${incidentContext}`
           }
         ],
         model: 'llama-3.3-70b-versatile',

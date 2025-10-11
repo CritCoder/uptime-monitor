@@ -135,23 +135,92 @@ export default function IncidentDetailPage() {
         )}
       </div>
 
-      {/* AI Summary */}
-      <div className="card p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <SparklesIcon className="h-5 w-5 text-purple-600" />
-          <h2 className="text-lg font-semibold text-gray-900">What Happened?</h2>
-          <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-full">AI Summary</span>
+      {/* AI Summary and Visual Diagram */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* AI Analysis - Left Side (2/3 width) */}
+        <div className="lg:col-span-2 card p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <SparklesIcon className="h-5 w-5 text-purple-600" />
+            <h2 className="text-lg font-semibold text-gray-900">Incident Analysis</h2>
+            <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-full">AI-Powered</span>
+          </div>
+          {isGeneratingSummary ? (
+            <div className="flex items-center gap-3 text-gray-600">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600"></div>
+              <span>Analyzing incident and generating recommendations...</span>
+            </div>
+          ) : (
+            <div className="prose prose-sm max-w-none">
+              <div className="text-gray-700 leading-relaxed whitespace-pre-line">{aiSummary}</div>
+            </div>
+          )}
         </div>
-        {isGeneratingSummary ? (
-          <div className="flex items-center gap-3 text-gray-600">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600"></div>
-            <span>Generating easy-to-understand summary...</span>
+
+        {/* Visual Diagram - Right Side (1/3 width) */}
+        <div className="card p-6">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Service Status</h3>
+          <div className="space-y-4">
+            {/* User Icon */}
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <span className="text-xs text-gray-600 mt-1">Users</span>
+            </div>
+
+            {/* Connection Line */}
+            <div className="flex flex-col items-center">
+              <div className="w-px h-8 bg-gray-300"></div>
+            </div>
+
+            {/* Internet Cloud */}
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                <svg className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                </svg>
+              </div>
+              <span className="text-xs text-gray-600 mt-1">Internet</span>
+            </div>
+
+            {/* Connection Line with X */}
+            <div className="flex flex-col items-center relative">
+              <div className="w-px h-8 bg-red-300"></div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Server */}
+            <div className="flex flex-col items-center">
+              <div className={`w-12 h-12 rounded-full ${incident.status === 'resolved' ? 'bg-green-100' : 'bg-red-100'} flex items-center justify-center`}>
+                <svg className={`w-6 h-6 ${incident.status === 'resolved' ? 'text-green-600' : 'text-red-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                </svg>
+              </div>
+              <span className="text-xs text-gray-600 mt-1">{incident.monitor?.name || 'Server'}</span>
+              <span className={`text-xs font-medium mt-1 ${incident.status === 'resolved' ? 'text-green-600' : 'text-red-600'}`}>
+                {incident.status === 'resolved' ? '✓ Online' : '✗ Down'}
+              </span>
+            </div>
+
+            {/* Status Badge */}
+            <div className="mt-4 p-3 bg-gray-50 rounded-lg text-center">
+              <div className="text-xs text-gray-500">Current Status</div>
+              <div className={`text-sm font-semibold mt-1 capitalize ${
+                incident.status === 'resolved' ? 'text-green-600' : 
+                incident.status === 'investigating' ? 'text-blue-600' : 
+                'text-orange-600'
+              }`}>
+                {incident.status}
+              </div>
+            </div>
           </div>
-        ) : (
-          <div className="prose prose-sm max-w-none">
-            <p className="text-gray-700 leading-relaxed">{aiSummary}</p>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Timeline */}
