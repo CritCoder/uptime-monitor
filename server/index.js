@@ -23,6 +23,7 @@ import webhookRoutes from './routes/webhooks.js';
 import workspaceRoutes from './routes/workspaces.js';
 import adminRoutes from './routes/admin.js';
 import missingRoutes from './routes/missing.js';
+import subscriptionRoutes from './routes/subscription.js';
 
 // Import services
 import { initializeQueues } from './services/queue.js';
@@ -63,6 +64,11 @@ app.use(cors({
   origin: process.env.CLIENT_URL || "http://localhost:5173",
   credentials: true
 }));
+
+// Webhooks route (must be before express.json middleware for raw body)
+app.use('/webhooks', webhookRoutes);
+
+// JSON body parser (after webhooks)
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -81,6 +87,7 @@ app.get('/', (req, res) => {
       incidents: '/api/incidents',
       alerts: '/api/alerts',
       statusPages: '/api/status-pages',
+      subscription: '/api/subscription',
       publicStatus: '/status/public/:slug'
     },
     documentation: 'https://github.com/your-repo/uptime-monitor'
@@ -98,8 +105,8 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/monitors', monitorRoutes);
 app.use('/api/incidents', incidentRoutes);
 app.use('/api/alerts', alertRoutes);
+app.use('/api/subscription', subscriptionRoutes);
 app.use('/api/status-pages', statusPageRoutes);
-app.use('/api/webhooks', webhookRoutes);
 app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', missingRoutes);

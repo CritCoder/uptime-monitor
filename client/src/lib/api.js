@@ -25,6 +25,14 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle email verification required
+    if (error.response?.data?.code === 'EMAIL_NOT_VERIFIED') {
+      localStorage.removeItem('token')
+      window.location.href = '/verify-email?required=true'
+      return Promise.reject(error)
+    }
+    
+    // Handle unauthorized
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
       window.location.href = '/login'

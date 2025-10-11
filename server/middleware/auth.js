@@ -26,6 +26,15 @@ export const authenticateToken = async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid token' });
     }
 
+    // Check if email is verified
+    if (!user.isEmailVerified) {
+      return res.status(403).json({ 
+        error: 'Email verification required',
+        code: 'EMAIL_NOT_VERIFIED',
+        message: 'Please verify your email address to continue. Check your inbox for the verification link.'
+      });
+    }
+
     req.user = user;
     next();
   } catch (error) {

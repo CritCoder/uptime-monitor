@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../index.js';
 import { authenticateToken, requireWorkspace } from '../middleware/auth.js';
 import { scheduleMonitorCheck } from '../services/queue.js';
+import { canCreateMonitor, isValidCheckInterval, getMinCheckInterval } from '../config/pricing.js';
 
 const router = express.Router();
 
@@ -232,14 +233,34 @@ router.get('/:id', authenticateToken, async (req, res) => {
 // Create monitor
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    // Get user's workspace
-    const userWorkspace = await prisma.workspaceMember.findFirst({
-      where: { userId: req.user.id },
-      include: { workspace: true }
+    // Get user with workspace
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      include: {
+        workspaces: {
+          include: { workspace: true }
+        }
+      }
     });
+
+    const userWorkspace = user.workspaces[0];
 
     if (!userWorkspace) {
       return res.status(403).json({ error: 'No workspace found for user' });
+    }
+
+    // Check monitor count limit
+    const currentMonitorCount = await prisma.monitor.count({
+      where: { workspaceId: userWorkspace.workspaceId }
+    });
+
+    if (!canCreateMonitor(user.plan, currentMonitorCount)) {
+      return res.status(403).json({ 
+        error: 'Monitor limit reached',
+        message: `Your ${user.plan} plan allows up to ${currentMonitorCount} monitors. Please upgrade to Pro for unlimited monitors.`,
+        code: 'MONITOR_LIMIT_REACHED',
+        upgradeRequired: true
+      });
     }
 
     // Use user's workspace ID instead of the one from request
@@ -249,6 +270,19 @@ router.post('/', authenticateToken, async (req, res) => {
     };
 
     const validatedData = createMonitorSchema.parse(data);
+
+    // Validate check interval for user's plan
+    if (!isValidCheckInterval(user.plan, validatedData.interval)) {
+      const minInterval = getMinCheckInterval(user.plan);
+      const minMinutes = Math.floor(minInterval / 60);
+      return res.status(403).json({ 
+        error: 'Check interval not allowed',
+        message: `Your ${user.plan} plan requires a minimum check interval of ${minMinutes} ${minMinutes === 1 ? 'minute' : minMinutes === 60 ? 'hour' : 'minutes'}. Upgrade to Pro for 1-minute intervals.`,
+        code: 'INTERVAL_NOT_ALLOWED',
+        upgradeRequired: true,
+        minInterval: minInterval
+      });
+    }
     
     // Generate unique slug
     const slug = await generateUniqueSlug(validatedData.name);
