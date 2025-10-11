@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Logo from '../components/Logo'
+import GoogleSignInButton from '../components/GoogleSignInButton'
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
@@ -65,7 +66,23 @@ export default function RegisterPage() {
             </Link>
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+
+        <div className="mt-8">
+          <GoogleSignInButton text="Sign up with Google" />
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-gray-50 text-gray-500">Or continue with email</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form className="mt-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -74,7 +91,7 @@ export default function RegisterPage() {
               <input
                 {...register('name', { required: 'Name is required' })}
                 type="text"
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 placeholder="John Doe"
               />
               {errors.name && (
@@ -87,7 +104,7 @@ export default function RegisterPage() {
                 Email address
               </label>
               <input
-                {...register('email', { 
+                {...register('email', {
                   required: 'Email is required',
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -96,7 +113,7 @@ export default function RegisterPage() {
                 })}
                 type="email"
                 autoComplete="email"
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 placeholder="john@example.com"
               />
               {errors.email && (
@@ -109,7 +126,7 @@ export default function RegisterPage() {
                 Password
               </label>
               <input
-                {...register('password', { 
+                {...register('password', {
                   required: 'Password is required',
                   minLength: {
                     value: 8,
@@ -118,7 +135,7 @@ export default function RegisterPage() {
                 })}
                 type="password"
                 autoComplete="new-password"
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 placeholder="••••••••"
               />
               {errors.password && (
@@ -131,13 +148,13 @@ export default function RegisterPage() {
                 Confirm password
               </label>
               <input
-                {...register('confirmPassword', { 
+                {...register('confirmPassword', {
                   required: 'Please confirm your password',
                   validate: value => value === password || 'Passwords do not match'
                 })}
                 type="password"
                 autoComplete="new-password"
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 placeholder="••••••••"
               />
               {errors.confirmPassword && (

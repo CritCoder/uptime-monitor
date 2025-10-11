@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { prisma } from '../index.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { sendEmail } from '../services/email.js';
+import passport from '../config/passport.js';
 
 const router = express.Router();
 
@@ -374,5 +375,36 @@ router.put('/profile', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Profile update failed' });
   }
 });
+
+// Google OAuth routes
+// Initiate Google OAuth
+router.get('/google', passport.authenticate('google', {
+  scope: ['profile', 'email'],
+  session: false
+}));
+
+// Google OAuth callback
+router.get('/google/callback',
+  passport.authenticate('google', {
+    session: false,
+    failureRedirect: `${process.env.CLIENT_URL}/login?error=oauth_failed`
+  }),
+  async (req, res) => {
+    try {
+      // Generate JWT token for the authenticated user
+      const token = jwt.sign(
+        { userId: req.user.id, email: req.user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      // Redirect to frontend with token
+      res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}`);
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+      res.redirect(`${process.env.CLIENT_URL}/login?error=auth_failed`);
+    }
+  }
+);
 
 export default router;

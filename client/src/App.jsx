@@ -22,6 +22,7 @@ import PublicStatusPage from './pages/PublicStatusPage'
 import DocsPage from './pages/DocsPage'
 import AdminPage from './pages/AdminPage'
 import VerifyEmailPage from './pages/VerifyEmailPage'
+import AuthCallbackPage from './pages/AuthCallbackPage'
 import AboutPage from './pages/AboutPage'
 import BlogPage from './pages/BlogPage'
 import CareersPage from './pages/CareersPage'
@@ -54,6 +55,7 @@ function App() {
       <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/dashboard" />} />
       <Route path="/forgot-password" element={!user ? <ForgotPasswordPage /> : <Navigate to="/dashboard" />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
       <Route path="/docs" element={<DocsPage />} />
       <Route path="/status/:slug" element={<PublicStatusPage />} />
       

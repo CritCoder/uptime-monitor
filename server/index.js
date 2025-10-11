@@ -8,6 +8,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import passport from 'passport';
 // import { createBullBoard } from '@bull-board/api';
 // import { BullAdapter } from '@bull-board/api/bullAdapter';
 // import { ExpressAdapter } from '@bull-board/express';
@@ -71,6 +72,9 @@ app.use('/webhooks', webhookRoutes);
 // JSON body parser (after webhooks)
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Initialize Passport
+app.use(passport.initialize());
 
 // Root endpoint
 app.get('/', (req, res) => {

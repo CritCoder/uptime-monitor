@@ -125,13 +125,18 @@ export default function CreateMonitorPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">
-        {isEditMode ? 'Edit Monitor' : 'Create Monitor'}
-      </h1>
-      
-      <form onSubmit={handleSubmit(onSubmit)} className="card p-6 space-y-4">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {isEditMode ? 'Edit Monitor' : 'Create Monitor'}
+        </h1>
+        <p className="text-gray-600">
+          {isEditMode ? 'Update your monitor configuration' : 'Set up a new monitor to track your service'}
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="card p-8 space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Name</label>
+          <label className="block text-sm font-semibold text-gray-900 mb-2">Name</label>
           <input
             {...register('name', { required: 'Name is required' })}
             className="input mt-1"
@@ -143,7 +148,7 @@ export default function CreateMonitorPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Type</label>
+          <label className="block text-sm font-semibold text-gray-900 mb-2">Type</label>
           <select {...register('type')} className="select mt-1">
             <option value="http">HTTP/HTTPS</option>
             <option value="ping">Ping</option>
@@ -155,11 +160,11 @@ export default function CreateMonitorPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">URL/IP</label>
+          <label className="block text-sm font-semibold text-gray-900 mb-2">URL/IP</label>
           <Controller
             name="url"
             control={control}
-            rules={{ 
+            rules={{
               required: 'URL is required',
               validate: (value) => {
                 if (!value) return 'URL is required'
@@ -179,10 +184,13 @@ export default function CreateMonitorPage() {
               />
             )}
           />
+          <p className="mt-1 text-xs text-gray-500">
+            You can enter a domain like "example.com" or full URL like "https://example.com"
+          </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Check Interval</label>
+          <label className="block text-sm font-semibold text-gray-900 mb-2">Check Interval</label>
           <select {...register('interval')} className="select mt-1">
             <option value={30}>30 seconds</option>
             <option value={60}>1 minute</option>
@@ -193,18 +201,18 @@ export default function CreateMonitorPage() {
           </select>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 pt-2">
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary btn-md"
+            className="btn btn-primary btn-lg px-8"
           >
             {loading ? <LoadingSpinner size="sm" /> : (isEditMode ? 'Update Monitor' : 'Create Monitor')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/monitors')}
-            className="btn btn-secondary btn-md"
+            className="btn btn-secondary btn-lg px-8"
           >
             Cancel
           </button>
