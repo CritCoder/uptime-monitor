@@ -1,6 +1,35 @@
 import { useState, useEffect, useRef } from 'react'
 import { GlobeAltIcon } from '@heroicons/react/24/outline'
 
+// Favicon component with error handling
+function FaviconImage({ domain }) {
+  const [hasError, setHasError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const faviconUrl = `https://logo.clearbit.com/${domain}`
+
+  return (
+    <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-gray-100 rounded overflow-hidden relative">
+      {!hasError ? (
+        <img
+          src={faviconUrl}
+          alt=""
+          className="w-full h-full object-contain"
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setHasError(true)
+            setIsLoading(false)
+          }}
+          style={{ display: isLoading || hasError ? 'none' : 'block' }}
+        />
+      ) : null}
+      {(hasError || isLoading) && (
+        <GlobeAltIcon className="h-4 w-4 text-gray-400" />
+      )}
+    </div>
+  )
+}
+
 export default function URLAutocomplete({ value, onChange, onBlur, error, placeholder = "example.com or https://example.com" }) {
   const [inputValue, setInputValue] = useState(value || '')
   const [suggestions, setSuggestions] = useState([])
@@ -38,12 +67,6 @@ export default function URLAutocomplete({ value, onChange, onBlur, error, placeh
     } catch (e) {
       return url
     }
-  }
-
-  // Get favicon URL using Clearbit
-  const getFaviconUrl = (domain) => {
-    const cleanDomain = extractDomain(domain)
-    return `https://logo.clearbit.com/${cleanDomain}`
   }
 
   // Generate suggestions based on input
@@ -222,22 +245,7 @@ export default function URLAutocomplete({ value, onChange, onBlur, error, placeh
               onMouseEnter={() => setSelectedIndex(index)}
             >
               {/* Favicon */}
-              <div className="flex-shrink-0 w-5 h-5">
-                <img
-                  src={getFaviconUrl(suggestion.domain)}
-                  alt=""
-                  className="w-full h-full object-contain rounded"
-                  onError={(e) => {
-                    e.target.style.display = 'none'
-                    e.target.nextSibling.style.display = 'flex'
-                  }}
-                />
-                <div 
-                  className="w-full h-full items-center justify-center bg-gray-200 rounded hidden"
-                >
-                  <GlobeAltIcon className="h-3 w-3 text-gray-400" />
-                </div>
-              </div>
+              <FaviconImage domain={suggestion.domain} />
 
               {/* URL */}
               <div className="flex-1 min-w-0">
