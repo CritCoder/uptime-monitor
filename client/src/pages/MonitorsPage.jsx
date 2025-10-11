@@ -161,14 +161,38 @@ export default function MonitorsPage() {
                 to={`/monitors/${monitor.slug || monitor.id}`}
                 className="block px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
+                  {/* Screenshot Thumbnail */}
+                  {monitor.screenshotUrl ? (
+                    <div className="flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                      <img 
+                        src={monitor.screenshotUrl} 
+                        alt={`${monitor.name} screenshot`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div className="w-full h-full flex items-center justify-center" style={{ display: 'none' }}>
+                        <ServerIcon className="h-6 w-6 text-gray-400" />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex-shrink-0 w-20 h-14 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                      <ServerIcon className="h-6 w-6 text-gray-400" />
+                    </div>
+                  )}
+                  
+                  {/* Monitor Info */}
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
-                    <ServerIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
                     <div className="min-w-0 flex-1">
                       <h4 className="text-sm font-medium text-gray-900">{monitor.name}</h4>
                       <p className="text-sm text-gray-500 truncate">{monitor.url || monitor.ip}</p>
                     </div>
                   </div>
+                  
+                  {/* Monitor Stats */}
                   <div className="flex items-center gap-6 ml-4">
                     <div className="flex items-center justify-center min-w-[80px]">
                       <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(monitor.status)}`}>

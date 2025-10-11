@@ -4,6 +4,7 @@ import { prisma } from '../index.js';
 import { authenticateToken, requireWorkspace } from '../middleware/auth.js';
 import { scheduleMonitorCheck } from '../services/queue.js';
 import { canCreateMonitor, isValidCheckInterval, getMinCheckInterval } from '../config/pricing.js';
+import { captureScreenshot } from '../services/screenshot.js';
 
 const router = express.Router();
 
@@ -287,10 +288,22 @@ router.post('/', authenticateToken, async (req, res) => {
     // Generate unique slug
     const slug = await generateUniqueSlug(validatedData.name);
 
+    // Capture screenshot for HTTP/HTTPS monitors
+    let screenshotUrl = null;
+    if ((validatedData.type === 'http' || validatedData.type === 'https') && validatedData.url) {
+      try {
+        screenshotUrl = await captureScreenshot(validatedData.url);
+      } catch (error) {
+        console.error('Screenshot capture error:', error);
+        // Don't fail monitor creation if screenshot fails
+      }
+    }
+
     const monitor = await prisma.monitor.create({
       data: {
         ...validatedData,
         slug,
+        screenshotUrl,
         status: 'checking', // Start as checking, will update after first check
         isActive: true
       },

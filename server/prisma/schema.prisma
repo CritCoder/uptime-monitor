@@ -90,6 +90,7 @@ model Monitor {
   lastUptime      DateTime?
   uptimePercentage Float?
   avgResponseTime  Float?
+  screenshotUrl   String?  // Screenshot URL from screenshot API
   workspaceId     String
   workspace       Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())
