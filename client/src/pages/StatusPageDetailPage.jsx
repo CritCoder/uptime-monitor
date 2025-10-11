@@ -6,7 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { toast } from 'sonner'
 import { useAuth } from '../contexts/AuthContext'
 import { useEffect, useState } from 'react'
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, TrashIcon, XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 export default function StatusPageDetailPage() {
   const { id } = useParams()
@@ -16,6 +16,8 @@ export default function StatusPageDetailPage() {
   const isCreateMode = !id || id === 'create'
   const [showMonitorSelect, setShowMonitorSelect] = useState(false)
   const [selectedMonitor, setSelectedMonitor] = useState('')
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   
   console.log('StatusPageDetailPage - id:', id, 'isCreateMode:', isCreateMode)
   
@@ -166,9 +168,19 @@ export default function StatusPageDetailPage() {
     }
   }
 
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this status page?')) {
-      deleteMutation.mutate()
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      await api.delete(`/status-pages/${id}`)
+      toast.success('Status page deleted successfully!')
+      queryClient.invalidateQueries(['status-pages'])
+      navigate('/status-pages')
+    } catch (error) {
+      console.error('Delete status page error:', error)
+      toast.error(error.response?.data?.error || 'Failed to delete status page')
+    } finally {
+      setDeleting(false)
+      setShowDeleteModal(false)
     }
   }
 
@@ -214,11 +226,11 @@ export default function StatusPageDetailPage() {
               View
             </a>
             <button
-              onClick={handleDelete}
-              disabled={deleteMutation.isLoading}
+              onClick={() => setShowDeleteModal(true)}
               className="btn btn-danger btn-md"
             >
-              {deleteMutation.isLoading ? 'Deleting...' : 'Delete'}
+              <TrashIcon className="h-5 w-5 mr-2" />
+              Delete
             </button>
           </div>
         )}
@@ -419,6 +431,61 @@ export default function StatusPageDetailPage() {
               <p className="text-sm">Add monitors to display them on your public status page</p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex min-h-screen items-center justify-center p-4">
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => setShowDeleteModal(false)} />
+
+            <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+              <div className="absolute right-0 top-0 pr-4 pt-4">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+
+              <div className="sm:flex sm:items-start">
+                <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <ExclamationTriangleIcon className="h-6 w-6 text-red-600" />
+                </div>
+                <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <h3 className="text-lg font-semibold leading-6 text-gray-900">
+                    Delete Status Page
+                  </h3>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">
+                      Are you sure you want to delete this status page? This action cannot be undone. All associated monitors and settings will be removed from this status page.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-3">
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="btn btn-danger btn-md w-full sm:w-auto"
+                >
+                  {deleting ? <LoadingSpinner size="sm" /> : 'Delete Status Page'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={deleting}
+                  className="btn btn-secondary btn-md w-full sm:w-auto"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
