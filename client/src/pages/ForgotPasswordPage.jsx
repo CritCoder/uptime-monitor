@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Logo from '../components/Logo'
 import { api } from '../lib/api'

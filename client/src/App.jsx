@@ -34,6 +34,7 @@ import TermsPage from './pages/TermsPage'
 import SecurityPage from './pages/SecurityPage'
 import CompliancePage from './pages/CompliancePage'
 import LoadingSpinner from './components/LoadingSpinner'
+import { Toaster } from './components/ui/sonner'
 
 function App() {
   const { user, loading } = useAuth()
@@ -44,6 +45,8 @@ function App() {
   }
 
   return (
+    <>
+      <Toaster />
     <Routes>
       {/* Public routes */}
       <Route path="/" element={!user ? <LandingPage /> : <Navigate to="/dashboard" />} />
@@ -88,6 +91,7 @@ function App() {
       {/* Admin route */}
       <Route path="/admin" element={user ? <AdminPage /> : <Navigate to="/login" />} />
     </Routes>
+    </>
   )
 }
 

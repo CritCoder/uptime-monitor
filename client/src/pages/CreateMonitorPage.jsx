@@ -3,14 +3,19 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import LoadingSpinner from '../components/LoadingSpinner'
 import URLAutocomplete from '../components/URLAutocomplete'
+import { useAuth } from '../contexts/AuthContext'
+import { ExclamationTriangleIcon, EnvelopeIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 export default function CreateMonitorPage() {
   const [loading, setLoading] = useState(false)
+  const [showVerificationModal, setShowVerificationModal] = useState(false)
+  const [resendingEmail, setResendingEmail] = useState(false)
   const navigate = useNavigate()
   const { id } = useParams()
+  const { user, logout } = useAuth()
   const isEditMode = !!id
   const { register, handleSubmit, formState: { errors }, reset, control } = useForm()
 
@@ -57,6 +62,12 @@ export default function CreateMonitorPage() {
   }
 
   const onSubmit = async (data) => {
+    // Check email verification for new monitors only
+    if (!isEditMode && user && !user.isEmailVerified) {
+      setShowVerificationModal(true)
+      return
+    }
+
     setLoading(true)
     try {
       // Normalize the URL
@@ -84,6 +95,24 @@ export default function CreateMonitorPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleResendVerification = async () => {
+    setResendingEmail(true)
+    try {
+      await api.post('/auth/resend-verification')
+      toast.success('Verification email sent! Please check your inbox.')
+    } catch (error) {
+      console.error('Resend verification error:', error)
+      toast.error('Failed to send verification email. Please try again.')
+    } finally {
+      setResendingEmail(false)
+    }
+  }
+
+  const handleLogoutAndRegister = async () => {
+    await logout()
+    navigate('/register')
   }
 
   if (isEditMode && isLoadingMonitor) {

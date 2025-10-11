@@ -8,7 +8,7 @@ import {
   SparklesIcon
 } from '@heroicons/react/24/outline';
 import { api } from '../lib/api';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export default function BulkMonitorUpload({ onSuccess, onCancel }) {
   const [mode, setMode] = useState(null); // 'csv', 'textarea'
