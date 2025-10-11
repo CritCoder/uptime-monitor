@@ -1,5 +1,6 @@
 import { prisma } from '../index.js';
 import { scheduleNotification } from './queue.js';
+import { sendIntegrationNotification } from './notifications.js';
 
 // Handle status changes and create/resolve incidents
 export async function handleStatusChange(monitor, checkResult) {
@@ -166,6 +167,33 @@ async function sendIncidentNotifications(incident, monitor, type) {
         alertContact,
         rule
       });
+    }
+
+    // Also send notifications to enabled integrations
+    const monitorWithWorkspace = await prisma.monitor.findUnique({
+      where: { id: monitor.id },
+      select: { workspaceId: true }
+    });
+
+    if (monitorWithWorkspace) {
+      const integrations = await prisma.integration.findMany({
+        where: {
+          workspaceId: monitorWithWorkspace.workspaceId,
+          enabled: true
+        }
+      });
+
+      for (const integration of integrations) {
+        try {
+          await sendIntegrationNotification(integration, {
+            type,
+            incident,
+            monitor
+          });
+        } catch (error) {
+          console.error(`Failed to send notification to integration ${integration.name}:`, error);
+        }
+      }
     }
   } catch (error) {
     console.error('Failed to send incident notifications:', error);

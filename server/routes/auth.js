@@ -208,6 +208,66 @@ router.post('/verify-email', async (req, res) => {
   }
 });
 
+// Resend verification email
+router.post('/resend-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (!user) {
+      // Don't reveal if user exists or not
+      return res.json({
+        success: true,
+        message: 'If an account exists with that email, a verification link has been sent.'
+      });
+    }
+
+    if (user.isEmailVerified) {
+      return res.status(400).json({ error: 'Email is already verified' });
+    }
+
+    // Generate new verification token
+    const emailVerifyToken = crypto.randomBytes(32).toString('hex');
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { emailVerifyToken }
+    });
+
+    // Send verification email
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Verify your email address',
+        template: 'email-verification',
+        data: {
+          name: user.name,
+          verificationUrl: `${process.env.CLIENT_URL}/verify-email?token=${emailVerifyToken}`
+        }
+      });
+      console.log(`✅ Verification email resent to ${email}`);
+    } catch (emailError) {
+      console.error('❌ Email sending failed:', emailError.response?.data || emailError.message);
+      // Don't fail the request - token is still valid
+    }
+
+    res.json({
+      success: true,
+      message: 'Verification email sent. Please check your inbox.'
+    });
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    res.status(500).json({ error: 'Failed to resend verification email' });
+  }
+});
+
 // Forgot password
 router.post('/forgot-password', async (req, res) => {
   try {
@@ -245,11 +305,18 @@ router.post('/forgot-password', async (req, res) => {
           resetUrl: `${process.env.CLIENT_URL}/reset-password?token=${passwordResetToken}`
         }
       });
+      console.log(`✅ Password reset email sent to ${email}`);
     } catch (emailError) {
-      console.warn('Email sending failed (non-critical):', emailError.message);
+      console.error('❌ Email sending failed:', emailError.response?.data || emailError.message);
+      // Don't fail the request - the reset token is still valid in the database
+      // The user can still reset their password if they have the link
     }
 
-    res.json({ message: 'If an account with that email exists, a password reset link has been sent.' });
+    // Always return success for security (don't reveal if email exists or was sent)
+    res.json({
+      success: true,
+      message: 'If an account with that email exists, a password reset link has been sent.'
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Validation error', details: error.errors });

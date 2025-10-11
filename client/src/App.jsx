@@ -17,6 +17,7 @@ import IncidentDetailPage from './pages/IncidentDetailPage'
 import AlertsPage from './pages/AlertsPage'
 import StatusPagesPage from './pages/StatusPagesPage'
 import StatusPageDetailPage from './pages/StatusPageDetailPage'
+import IntegrationsPage from './pages/IntegrationsPage'
 import SettingsPage from './pages/SettingsPage'
 import PublicStatusPage from './pages/PublicStatusPage'
 import DocsPage from './pages/DocsPage'
@@ -88,6 +89,7 @@ function App() {
       <Route path="/status-pages" element={user ? <Layout><StatusPagesPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/status-pages/create" element={user ? <Layout><StatusPageDetailPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/status-pages/:id" element={user ? <Layout><StatusPageDetailPage /></Layout> : <Navigate to="/login" />} />
+      <Route path="/integrations" element={user ? <Layout><IntegrationsPage /></Layout> : <Navigate to="/login" />} />
       <Route path="/settings" element={user ? <Layout><SettingsPage /></Layout> : <Navigate to="/login" />} />
       
       {/* Admin route */}

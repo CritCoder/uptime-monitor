@@ -15,12 +15,9 @@ export default function ForgotPasswordPage() {
     setLoading(true)
     try {
       const response = await api.post('/auth/forgot-password', data)
-      if (response.data.success) {
-        setEmailSent(true)
-        toast.success('Password reset instructions sent to your email')
-      } else {
-        toast.error(response.data.error || 'Failed to send reset email')
-      }
+      // Always show success for security (don't reveal if email exists)
+      setEmailSent(true)
+      toast.success('If an account exists with this email, you will receive password reset instructions')
     } catch (error) {
       console.error('Forgot password error:', error)
       // For security, we don't reveal if email exists or not

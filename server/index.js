@@ -25,6 +25,7 @@ import workspaceRoutes from './routes/workspaces.js';
 import adminRoutes from './routes/admin.js';
 import missingRoutes from './routes/missing.js';
 import subscriptionRoutes from './routes/subscription.js';
+import integrationsRoutes from './routes/integrations.js';
 
 // Import services
 import { initializeQueues } from './services/queue.js';
@@ -112,6 +113,7 @@ app.use('/api/alerts', alertRoutes);
 app.use('/api/subscription', subscriptionRoutes);
 app.use('/api/status-pages', statusPageRoutes);
 app.use('/api/workspaces', workspaceRoutes);
+app.use('/api/integrations', integrationsRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', missingRoutes);
 

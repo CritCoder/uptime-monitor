@@ -3,12 +3,16 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../lib/api'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { CheckCircle, XCircle } from 'lucide-react'
+import { toast } from 'sonner'
+import { useAuth } from '../contexts/AuthContext'
 
 function VerifyEmailPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [status, setStatus] = useState('verifying') // 'verifying', 'success', 'error', 'required'
   const [message, setMessage] = useState('')
+  const [resending, setResending] = useState(false)
   const required = searchParams.get('required') === 'true'
 
   useEffect(() => {
@@ -46,6 +50,34 @@ function VerifyEmailPage() {
     verifyEmail()
   }, [searchParams, navigate, required])
 
+  const handleResendEmail = async () => {
+    setResending(true)
+    try {
+      const email = user?.email
+      if (!email) {
+        toast.error('Please log in to resend verification email')
+        navigate('/login')
+        return
+      }
+
+      const response = await api.post('/auth/resend-verification', { email })
+      if (response.data.success) {
+        toast.success('Verification email sent! Please check your inbox.')
+      } else {
+        toast.error(response.data.error || 'Failed to resend email')
+      }
+    } catch (error) {
+      console.error('Resend email error:', error)
+      if (error.response?.data?.error) {
+        toast.error(error.response.data.error)
+      } else {
+        toast.success('If your account exists, you will receive a verification email.')
+      }
+    } finally {
+      setResending(false)
+    }
+  }
+
   if (status === 'verifying') {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -82,6 +114,20 @@ function VerifyEmailPage() {
               <p className="text-sm text-gray-500">
                 Didn't receive the email?
               </p>
+              <button
+                onClick={handleResendEmail}
+                disabled={resending}
+                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {resending ? (
+                  <>
+                    <LoadingSpinner size="sm" />
+                    <span className="ml-2">Sending...</span>
+                  </>
+                ) : (
+                  'Resend Verification Email'
+                )}
+              </button>
               <button
                 onClick={() => navigate('/login')}
                 className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"

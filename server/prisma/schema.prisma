@@ -46,6 +46,7 @@ model Workspace {
   monitors    Monitor[]
   statusPages StatusPage[]
   alertContacts AlertContact[]
+  integrations Integration[]
   
   @@map("workspaces")
 }
@@ -304,4 +305,18 @@ model Invoice {
   
   @@index([userId, createdAt])
   @@map("invoices")
+}
+
+model Integration {
+  id          String   @id @default(uuid())
+  name        String
+  type        String   // slack, discord, pagerduty, webhook, email, sms
+  config      String   // JSON string containing configuration (webhookUrl, channel, etc.)
+  enabled     Boolean  @default(true)
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("integrations")
 }

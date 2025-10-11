@@ -320,3 +320,62 @@ export async function testNotification(alertContact) {
     return { success: false, message: error.message };
   }
 }
+
+// Send Slack notification with webhook URL (for integrations)
+export async function sendSlackWebhook(webhookUrl, title, text, color = '#36A64F', fields = []) {
+  try {
+    const payload = {
+      attachments: [{
+        color,
+        title,
+        text,
+        fields,
+        footer: 'Uptime Monitor',
+        ts: Math.floor(Date.now() / 1000)
+      }]
+    };
+
+    await axios.post(webhookUrl, payload);
+    console.log(`💬 Slack notification sent to webhook`);
+  } catch (error) {
+    console.error('Slack notification failed:', error);
+    throw error;
+  }
+}
+
+// Send notification to integration
+export async function sendIntegrationNotification(integration, data) {
+  try {
+    const config = typeof integration.config === 'string' 
+      ? JSON.parse(integration.config) 
+      : integration.config;
+
+    if (integration.type === 'slack' && config.webhookUrl) {
+      const { incident, monitor, type } = data;
+      let color, title, text;
+      
+      if (type === 'incident_started') {
+        color = 'danger';
+        title = `🚨 ${monitor.name} is down`;
+        text = `Monitor ${monitor.name} is experiencing issues.`;
+      } else if (type === 'incident_resolved') {
+        color = 'good';
+        title = `✅ ${monitor.name} is back up`;
+        text = `Monitor ${monitor.name} has recovered.`;
+      }
+
+      const fields = [
+        { title: 'Monitor', value: monitor.name, short: true },
+        { title: 'URL', value: monitor.url || monitor.ip || 'N/A', short: true },
+        { title: 'Severity', value: incident.severity, short: true },
+        { title: 'Time', value: new Date().toLocaleString(), short: true }
+      ];
+
+      await sendSlackWebhook(config.webhookUrl, title, text, color, fields);
+    }
+    // Add other integration types here as needed
+  } catch (error) {
+    console.error(`Failed to send ${integration.type} notification:`, error);
+    throw error;
+  }
+}

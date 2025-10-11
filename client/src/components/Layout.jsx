@@ -12,7 +12,8 @@ import {
   Bars3Icon,
   XMarkIcon,
   UserIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  PuzzlePieceIcon
 } from '@heroicons/react/24/outline'
 
 const navigation = [
@@ -21,6 +22,7 @@ const navigation = [
   { name: 'Incidents', href: '/incidents', icon: ExclamationTriangleIcon },
   { name: 'Alerts', href: '/alerts', icon: BellIcon },
   { name: 'Status Pages', href: '/status-pages', icon: ServerIcon },
+  { name: 'Integrations', href: '/integrations', icon: PuzzlePieceIcon },
   { name: 'Settings', href: '/settings', icon: CogIcon },
 ]
 
