@@ -291,7 +291,7 @@ router.post('/', authenticateToken, async (req, res) => {
       data: {
         ...validatedData,
         slug,
-        status: 'up', // Start as up, will update after first check
+        status: 'checking', // Start as checking, will update after first check
         isActive: true
       },
       include: {
@@ -371,13 +371,16 @@ router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Check if id is a UUID or a slug
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
     // Check if user has access to this monitor
     const monitor = await prisma.monitor.findFirst({
       where: {
-        id,
+        ...(isUUID ? { id } : { slug: id }),
         workspace: {
           members: {
-            some: { 
+            some: {
               userId: req.user.id,
               role: { in: ['admin', 'member'] }
             }
@@ -391,7 +394,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     }
 
     await prisma.monitor.delete({
-      where: { id }
+      where: { id: monitor.id }
     });
 
     res.json({ message: 'Monitor deleted successfully' });

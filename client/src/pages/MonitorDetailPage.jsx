@@ -3,14 +3,15 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import { formatUptime, formatResponseTime, getStatusColor, formatRelativeTime } from '../lib/utils'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { 
-  ArrowLeftIcon, 
-  ServerIcon, 
-  ClockIcon, 
+import {
+  ArrowLeftIcon,
+  ServerIcon,
+  ClockIcon,
   CheckCircleIcon,
   XCircleIcon,
   ChartBarIcon,
-  ArrowTrendingUpIcon
+  ArrowTrendingUpIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
@@ -68,32 +69,33 @@ export default function MonitorDetailPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+      <div className="flex items-start justify-between">
+        <div className="flex items-start space-x-4 flex-1">
           <Link
             to="/monitors"
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 mt-1"
           >
             <ArrowLeftIcon className="h-6 w-6" />
           </Link>
-          <div>
+          <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900">{monitor?.name}</h1>
-            <p className="text-gray-600">{monitor?.url || monitor?.ip}</p>
+            <div className="flex items-center gap-3 mt-2">
+              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(monitor?.status)}`}>
+                {monitor?.status === 'up' && <CheckCircleIcon className="h-4 w-4 mr-1" />}
+                {monitor?.status === 'down' && <XCircleIcon className="h-4 w-4 mr-1" />}
+                {monitor?.status === 'checking' && <ArrowPathIcon className="h-4 w-4 mr-1 animate-spin" />}
+                {monitor?.status === 'checking' ? 'Checking...' : monitor?.status}
+              </div>
+              <p className="text-gray-600">{monitor?.url || monitor?.ip}</p>
+            </div>
           </div>
         </div>
-        <div className="flex items-center space-x-3">
-          <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(monitor?.status)}`}>
-            {monitor?.status === 'up' && <CheckCircleIcon className="h-4 w-4 mr-1" />}
-            {monitor?.status === 'down' && <XCircleIcon className="h-4 w-4 mr-1" />}
-            {monitor?.status}
-          </div>
-          <Link
-            to={`/monitors/${monitor?.slug || id}/edit`}
-            className="btn btn-secondary btn-md"
-          >
-            Edit Monitor
-          </Link>
-        </div>
+        <Link
+          to={`/monitors/${monitor?.slug || id}/edit`}
+          className="btn btn-secondary btn-md flex-shrink-0"
+        >
+          Edit Monitor
+        </Link>
       </div>
 
       {/* Stats Grid */}

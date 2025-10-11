@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import { formatUptime, formatResponseTime, getStatusColor, formatRelativeTime } from '../lib/utils'
-import { PlusIcon, ServerIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, ServerIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '../components/Empty'
 
 export default function MonitorsPage() {
@@ -164,12 +164,15 @@ export default function MonitorsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <ServerIcon className="h-5 w-5 text-gray-400" />
-                    <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(monitor.status)}`}>
-                      {monitor.status}
-                    </div>
                     <div>
                       <h4 className="text-sm font-medium text-gray-900">{monitor.name}</h4>
-                      <p className="text-sm text-gray-500">{monitor.url || monitor.ip}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(monitor.status)}`}>
+                          {monitor.status === 'checking' && <ArrowPathIcon className="h-3 w-3 mr-1 animate-spin" />}
+                          {monitor.status === 'checking' ? 'Checking...' : monitor.status}
+                        </div>
+                        <p className="text-sm text-gray-500">{monitor.url || monitor.ip}</p>
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-500">

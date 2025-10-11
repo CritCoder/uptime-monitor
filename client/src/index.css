@@ -71,17 +71,21 @@
   .status-up {
     @apply text-green-600 bg-green-50;
   }
-  
+
   .status-down {
     @apply text-red-600 bg-red-50;
   }
-  
+
   .status-paused {
     @apply text-yellow-600 bg-yellow-50;
   }
-  
+
   .status-maintenance {
     @apply text-blue-600 bg-blue-50;
+  }
+
+  .status-checking {
+    @apply text-indigo-600 bg-indigo-50;
   }
 }
 

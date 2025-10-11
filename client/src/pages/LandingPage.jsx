@@ -286,41 +286,92 @@ export default function LandingPage() {
       </header>
 
       {/* 2. Hero Section */}
-      <div className="relative isolate px-6 pt-14 lg:px-8">
-        <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
-          <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-primary-400 to-purple-400 opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
+      <div className="relative isolate px-6 pt-14 lg:px-8 overflow-hidden">
+        {/* Animated gradient background */}
+        <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+          <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-primary-400 via-purple-400 to-pink-400 opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem] animate-pulse"
+               style={{ clipPath: 'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)' }}></div>
         </div>
-        
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+        <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+          <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-blue-400 via-primary-400 to-purple-400 opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+               style={{ clipPath: 'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)' }}></div>
+        </div>
+
+        <div className="mx-auto max-w-3xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            {/* Badge */}
+            <div className="mb-8 inline-flex items-center rounded-full px-4 py-1.5 text-sm font-medium bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-700/10">
+              <SparklesIcon className="h-4 w-4 mr-2" />
+              <span>New: Real-time WebSocket monitoring</span>
+            </div>
+
+            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent sm:text-6xl lg:text-7xl pb-2">
               Professional Uptime Monitoring
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Monitor your websites, APIs, and services with enterprise-grade reliability. 
+            <p className="mt-6 text-base sm:text-lg lg:text-xl leading-7 sm:leading-8 text-gray-600 max-w-xl mx-auto px-4">
+              Monitor your websites, APIs, and services with enterprise-grade reliability.
               Get instant alerts and keep your users informed with beautiful status pages.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-x-6 px-4">
               <Link
                 to="/register"
-                className="rounded-md bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                className="w-full sm:w-auto group relative inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl hover:shadow-primary-500/50 transition-all duration-200 hover:scale-105"
               >
                 Get started for free
+                <ArrowTrendingUpIcon className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/status/demo-status" className="text-sm font-semibold leading-6 text-gray-900">
-                View demo status page <span aria-hidden="true">→</span>
+              <Link to="/status/demo-status" className="w-full sm:w-auto group text-sm font-semibold leading-6 text-gray-900 flex items-center justify-center hover:text-primary-600 transition-colors">
+                View demo status page
+                <span aria-hidden="true" className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
               </Link>
             </div>
-            
+
             {/* Trust badges */}
-            <div className="mt-10 flex items-center justify-center gap-x-8 text-sm text-gray-600">
+            <div className="mt-12 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-x-8 sm:gap-y-4 text-xs sm:text-sm text-gray-600 px-4">
               <div className="flex items-center gap-x-2">
-                <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-green-100">
+                  <CheckCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                </div>
                 <span>No credit card required</span>
               </div>
               <div className="flex items-center gap-x-2">
-                <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-green-100">
+                  <CheckCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                </div>
                 <span>14-day free trial</span>
+              </div>
+              <div className="flex items-center gap-x-2">
+                <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-green-100">
+                  <CheckCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                </div>
+                <span>Cancel anytime</span>
+              </div>
+            </div>
+
+            {/* Dashboard preview mockup - Hidden on mobile for better performance */}
+            <div className="mt-16 sm:mt-24 hidden sm:block">
+              <div className="relative rounded-2xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:rounded-3xl lg:p-4">
+                <div className="aspect-[16/9] rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 shadow-2xl ring-1 ring-gray-900/10 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 via-purple-500/10 to-pink-500/10"></div>
+                  <div className="relative h-full w-full p-4 sm:p-8">
+                    {/* Mini dashboard preview */}
+                    <div className="h-full w-full rounded-lg bg-white/80 backdrop-blur-sm shadow-xl p-4 sm:p-6 flex flex-col">
+                      <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <div className="h-6 sm:h-8 w-24 sm:w-32 bg-gradient-to-r from-primary-400 to-primary-600 rounded"></div>
+                        <div className="flex gap-2">
+                          <div className="h-6 w-6 sm:h-8 sm:w-8 bg-gray-200 rounded"></div>
+                          <div className="h-6 w-6 sm:h-8 sm:w-8 bg-gray-200 rounded"></div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
+                        <div className="h-16 sm:h-20 bg-green-50 rounded-lg border border-green-200"></div>
+                        <div className="h-16 sm:h-20 bg-blue-50 rounded-lg border border-blue-200"></div>
+                        <div className="h-16 sm:h-20 bg-purple-50 rounded-lg border border-purple-200"></div>
+                      </div>
+                      <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

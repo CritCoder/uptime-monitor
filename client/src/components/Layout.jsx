@@ -60,7 +60,7 @@ export default function Layout({ children }) {
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href
+              const isActive = location.pathname === item.href || location.pathname.startsWith(item.href + '/')
               return (
                 <Link
                   key={item.name}
@@ -81,12 +81,24 @@ export default function Layout({ children }) {
           <div className="border-t border-gray-200 p-4">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                {user?.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={user.name}
-                    className="h-10 w-10 rounded-full object-cover"
-                  />
+                {user?.avatarUrl && user.avatarUrl.trim() !== '' ? (
+                  <>
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.name}
+                      className="h-10 w-10 rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div
+                      className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center"
+                      style={{ display: 'none' }}
+                    >
+                      <UserIcon className="h-6 w-6 text-primary-600" />
+                    </div>
+                  </>
                 ) : (
                   <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
                     <UserIcon className="h-6 w-6 text-primary-600" />
@@ -119,7 +131,7 @@ export default function Layout({ children }) {
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href
+              const isActive = location.pathname === item.href || location.pathname.startsWith(item.href + '/')
               return (
                 <Link
                   key={item.name}
@@ -140,12 +152,24 @@ export default function Layout({ children }) {
           <div className="border-t border-gray-200 p-4">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                {user?.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={user.name}
-                    className="h-10 w-10 rounded-full object-cover"
-                  />
+                {user?.avatarUrl && user.avatarUrl.trim() !== '' ? (
+                  <>
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.name}
+                      className="h-10 w-10 rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div
+                      className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center"
+                      style={{ display: 'none' }}
+                    >
+                      <UserIcon className="h-6 w-6 text-primary-600" />
+                    </div>
+                  </>
                 ) : (
                   <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
                     <UserIcon className="h-6 w-6 text-primary-600" />
