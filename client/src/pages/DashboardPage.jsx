@@ -159,67 +159,77 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="px-6 py-8">
-            {(() => {
-              // Generate 90 days of uptime history
-              const today = new Date()
-              const uptimeHistory = Array.from({ length: 90 }, (_, i) => {
-                const date = new Date(today)
-                date.setDate(date.getDate() - (89 - i))
-                const isUp = Math.random() > 0.05 // 95% uptime simulation
-                
-                return {
-                  date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                  fullDate: date.toLocaleDateString(),
-                  status: isUp ? 'up' : 'down',
-                  uptime: isUp ? 100 : 0
-                }
-              })
+            {monitors && monitors.length > 0 ? (
+              (() => {
+                // Generate 90 days of uptime history
+                const today = new Date()
+                const uptimeHistory = Array.from({ length: 90 }, (_, i) => {
+                  const date = new Date(today)
+                  date.setDate(date.getDate() - (89 - i))
+                  const isUp = Math.random() > 0.05 // 95% uptime simulation
+                  
+                  return {
+                    date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                    fullDate: date.toLocaleDateString(),
+                    status: isUp ? 'up' : 'down',
+                    uptime: isUp ? 100 : 0
+                  }
+                })
 
-              return (
-                <div className="space-y-8">
-                  {/* Main uptime bar */}
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-500 whitespace-nowrap">90 days ago</span>
-                    <div className="flex-1 flex gap-[2px]">
-                      {uptimeHistory.map((day, index) => (
-                        <div
-                          key={index}
-                          className={`flex-1 h-16 rounded-sm transition-all hover:scale-110 hover:z-10 cursor-pointer relative ${
-                            day.status === 'up' 
-                              ? 'bg-green-500 hover:bg-green-600' 
-                              : 'bg-red-500 hover:bg-red-600'
-                          }`}
-                          title={`${day.date}: ${day.status === 'up' ? '100%' : '0%'} uptime`}
-                        >
-                          <div className="opacity-0 hover:opacity-100 absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap pointer-events-none z-20 transition-opacity">
-                            <div className="font-semibold">{day.date}</div>
-                            <div className={day.status === 'up' ? 'text-green-400' : 'text-red-400'}>
-                              {day.status === 'up' ? '✓ 100% uptime' : '✗ Downtime'}
-                            </div>
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                              <div className="border-4 border-transparent border-t-gray-900" />
+                return (
+                  <div className="space-y-8">
+                    {/* Main uptime bar */}
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-gray-500 whitespace-nowrap">90 days ago</span>
+                      <div className="flex-1 flex gap-[2px]">
+                        {uptimeHistory.map((day, index) => (
+                          <div
+                            key={index}
+                            className={`flex-1 h-16 rounded-sm transition-all hover:scale-110 hover:z-10 cursor-pointer relative ${
+                              day.status === 'up' 
+                                ? 'bg-green-500 hover:bg-green-600' 
+                                : 'bg-red-500 hover:bg-red-600'
+                            }`}
+                            title={`${day.date}: ${day.status === 'up' ? '100%' : '0%'} uptime`}
+                          >
+                            <div className="opacity-0 hover:opacity-100 absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap pointer-events-none z-20 transition-opacity">
+                              <div className="font-semibold">{day.date}</div>
+                              <div className={day.status === 'up' ? 'text-green-400' : 'text-red-400'}>
+                                {day.status === 'up' ? '✓ 100% uptime' : '✗ Downtime'}
+                              </div>
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                                <div className="border-4 border-transparent border-t-gray-900" />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                      <span className="text-xs text-gray-500 whitespace-nowrap">Today</span>
                     </div>
-                    <span className="text-xs text-gray-500 whitespace-nowrap">Today</span>
-                  </div>
 
-                  {/* Legend */}
-                  <div className="flex items-center justify-center gap-8 text-sm text-gray-600 pt-2 border-t border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-green-500 rounded-sm" />
-                      <span>Operational</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-red-500 rounded-sm" />
-                      <span>Downtime</span>
+                    {/* Legend */}
+                    <div className="flex items-center justify-center gap-8 text-sm text-gray-600 pt-2 border-t border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-sm" />
+                        <span>Operational</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded-sm" />
+                        <span>Downtime</span>
+                      </div>
                     </div>
                   </div>
+                )
+              })()
+            ) : (
+              <div className="flex items-center justify-center h-64 text-gray-500">
+                <div className="text-center">
+                  <ServerIcon className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                  <p>No uptime data available</p>
+                  <p className="text-sm text-gray-400 mt-1">Data will appear after monitors start checking</p>
                 </div>
-              )
-            })()}
+              </div>
+            )}
           </div>
         </div>
 
@@ -303,41 +313,43 @@ export default function DashboardPage() {
       </div>
 
       {/* Monitors List */}
-      <div className="card">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium text-gray-900">Recent Monitors</h3>
-            <Link
-              to="/monitors"
-              className="text-sm text-primary-600 hover:text-primary-500"
-            >
-              View all
-            </Link>
+      {monitors && monitors.length >= 3 && (
+        <div className="card">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium text-gray-900">Recent Monitors</h3>
+              <Link
+                to="/monitors"
+                className="text-sm text-primary-600 hover:text-primary-500"
+              >
+                View all
+              </Link>
+            </div>
           </div>
-        </div>
-        <div className="divide-y divide-gray-200">
-          {monitors?.slice(0, 5).map((monitor) => (
-            <div key={monitor.id} className="px-6 py-4 hover:bg-gray-50">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(monitor.status)}`}>
-                    {monitor.status}
+          <div className="divide-y divide-gray-200">
+            {monitors.slice(0, 5).map((monitor) => (
+              <div key={monitor.id} className="px-6 py-4 hover:bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(monitor.status)}`}>
+                      {monitor.status}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-900">{monitor.name}</h4>
+                      <p className="text-sm text-gray-500">{monitor.url || monitor.ip}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-900">{monitor.name}</h4>
-                    <p className="text-sm text-gray-500">{monitor.url || monitor.ip}</p>
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <span>{formatUptime(monitor.uptimePercentage || 0)}</span>
+                    <span>{formatResponseTime(monitor.avgResponseTime || 0)}</span>
+                    <span>{formatRelativeTime(monitor.lastCheckAt)}</span>
                   </div>
-                </div>
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
-                  <span>{formatUptime(monitor.uptimePercentage || 0)}</span>
-                  <span>{formatResponseTime(monitor.avgResponseTime || 0)}</span>
-                  <span>{formatRelativeTime(monitor.lastCheckAt)}</span>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Recent Incidents */}
       {incidentsData?.incidents?.length > 0 && (
