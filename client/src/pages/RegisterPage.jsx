@@ -17,7 +17,16 @@ export default function RegisterPage() {
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-      const result = await registerUser(data)
+      // Automatically detect user's timezone
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+      
+      // Add timezone to registration data
+      const registrationData = {
+        ...data,
+        timezone
+      }
+      
+      const result = await registerUser(registrationData)
       if (result.success) {
         toast.success(result.message || 'Registration successful! Please check your email to verify your account.')
         navigate('/login')
@@ -136,25 +145,6 @@ export default function RegisterPage() {
               )}
             </div>
 
-            <div>
-              <label htmlFor="timezone" className="block text-sm font-medium text-gray-700">
-                Timezone
-              </label>
-              <select
-                {...register('timezone')}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-              >
-                <option value="UTC">UTC</option>
-                <option value="America/New_York">Eastern Time</option>
-                <option value="America/Chicago">Central Time</option>
-                <option value="America/Denver">Mountain Time</option>
-                <option value="America/Los_Angeles">Pacific Time</option>
-                <option value="Europe/London">London</option>
-                <option value="Europe/Paris">Paris</option>
-                <option value="Asia/Tokyo">Tokyo</option>
-                <option value="Asia/Shanghai">Shanghai</option>
-              </select>
-            </div>
           </div>
 
           <div className="flex items-center">
