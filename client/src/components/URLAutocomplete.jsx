@@ -1,29 +1,46 @@
 import { useState, useEffect, useRef } from 'react'
 import { GlobeAltIcon } from '@heroicons/react/24/outline'
 
-// Favicon component with error handling
+// Favicon component with error handling and multiple fallbacks
 function FaviconImage({ domain }) {
-  const [hasError, setHasError] = useState(false)
+  const [imageIndex, setImageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
-  const faviconUrl = `https://logo.clearbit.com/${domain}`
+  // Try multiple favicon sources in order
+  const faviconSources = [
+    `https://logo.clearbit.com/${domain}`,
+    `https://www.google.com/s2/favicons?domain=${domain}&sz=32`,
+    `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+    `https://${domain}/favicon.ico`
+  ]
+
+  const currentUrl = faviconSources[imageIndex]
+
+  const handleError = () => {
+    if (imageIndex < faviconSources.length - 1) {
+      setImageIndex(imageIndex + 1)
+      setIsLoading(true)
+    } else {
+      setIsLoading(false)
+    }
+  }
+
+  const handleLoad = () => {
+    setIsLoading(false)
+  }
 
   return (
     <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-gray-100 rounded overflow-hidden relative">
-      {!hasError ? (
-        <img
-          src={faviconUrl}
-          alt=""
-          className="w-full h-full object-contain"
-          onLoad={() => setIsLoading(false)}
-          onError={() => {
-            setHasError(true)
-            setIsLoading(false)
-          }}
-          style={{ display: isLoading || hasError ? 'none' : 'block' }}
-        />
-      ) : null}
-      {(hasError || isLoading) && (
+      <img
+        key={currentUrl}
+        src={currentUrl}
+        alt=""
+        className="w-full h-full object-contain"
+        onLoad={handleLoad}
+        onError={handleError}
+        style={{ display: isLoading && imageIndex >= faviconSources.length - 1 ? 'none' : 'block' }}
+      />
+      {isLoading && imageIndex >= faviconSources.length - 1 && (
         <GlobeAltIcon className="h-4 w-4 text-gray-400" />
       )}
     </div>

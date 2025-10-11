@@ -399,4 +399,100 @@ router.get('/:id/timeline', authenticateToken, async (req, res) => {
   }
 });
 
+// Generate AI summary for incident
+router.post('/generate-summary', authenticateToken, async (req, res) => {
+  try {
+    const { incidentId } = req.body;
+
+    if (!incidentId) {
+      return res.status(400).json({ error: 'Incident ID is required' });
+    }
+
+    // Get user's workspace
+    const userWorkspace = await prisma.workspaceMember.findFirst({
+      where: { userId: req.user.id }
+    });
+
+    if (!userWorkspace) {
+      return res.status(403).json({ error: 'No workspace found' });
+    }
+
+    // Get incident with details
+    const incident = await prisma.incident.findFirst({
+      where: {
+        id: incidentId,
+        monitor: { workspaceId: userWorkspace.workspaceId }
+      },
+      include: {
+        monitor: {
+          select: {
+            name: true,
+            url: true,
+            type: true
+          }
+        },
+        updates: {
+          orderBy: { createdAt: 'asc' }
+        }
+      }
+    });
+
+    if (!incident) {
+      return res.status(404).json({ error: 'Incident not found' });
+    }
+
+    // Prepare context for AI
+    const incidentContext = `
+Incident Title: ${incident.title}
+Status: ${incident.status}
+Severity: ${incident.severity}
+Started At: ${new Date(incident.startedAt).toLocaleString()}
+${incident.resolvedAt ? `Resolved At: ${new Date(incident.resolvedAt).toLocaleString()}` : 'Still ongoing'}
+Monitor: ${incident.monitor?.name || 'Unknown'}
+Monitor URL: ${incident.monitor?.url || 'N/A'}
+Updates: ${incident.updates?.map(u => `- ${u.message}`).join('\n') || 'No updates yet'}
+    `.trim();
+
+    // Check if API key is configured
+    if (!process.env.GROQ_API_KEY) {
+      return res.status(500).json({ error: 'AI service not configured' });
+    }
+
+    // Call Groq API
+    const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant that explains technical incidents in simple, non-technical language that anyone can understand. Be concise, clear, and empathetic. Use simple analogies when needed.'
+          },
+          {
+            role: 'user',
+            content: `Please explain this incident in simple, everyday language that a non-technical person can understand:\n\n${incidentContext}`
+          }
+        ],
+        model: 'llama-3.3-70b-versatile',
+        temperature: 0.7,
+        max_tokens: 500
+      })
+    });
+
+    const result = await groqResponse.json();
+
+    if (result.choices && result.choices[0]?.message?.content) {
+      res.json({ summary: result.choices[0].message.content });
+    } else {
+      res.status(500).json({ error: 'Failed to generate summary' });
+    }
+  } catch (error) {
+    console.error('Generate AI summary error:', error);
+    res.status(500).json({ error: 'Failed to generate summary' });
+  }
+});
+
 export default router;
