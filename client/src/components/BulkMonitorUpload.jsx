@@ -533,7 +533,7 @@ example.com,Example (no protocol),3600,http`;
             placeholder="https://example.com
 https://api.example.com
 example.com
-bot9.ai
+uptimemonitor.live
 google.com"
             rows={10}
             className="input w-full font-mono text-sm"

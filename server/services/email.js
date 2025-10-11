@@ -3,7 +3,7 @@ import axios from 'axios';
 // Postmark API configuration
 const POSTMARK_API_URL = 'https://api.postmarkapp.com/email';
 const POSTMARK_SERVER_TOKEN = process.env.POSTMARK_SERVER_TOKEN || '094b915e-4c79-41fc-a332-cb9649de41ba';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'helpme@bot9.ai';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@uptimemonitor.live';
 
 // Email templates
 const templates = {
@@ -147,10 +147,10 @@ export async function sendEmail({ to, subject, template, data, html, text }) {
       {
         From: FROM_EMAIL,
         To: to,
-        Subject: emailContent.subject,
-        HtmlBody: emailContent.html,
-        TextBody: emailContent.text || emailContent.html.replace(/<[^>]*>/g, ''), // Strip HTML for text version
-        MessageStream: 'outbound'
+        Subject: emailContent.subject || subject,
+        HtmlBody: emailContent.html || html,
+        TextBody: emailContent.text || text || (emailContent.html || html || '').replace(/<[^>]*>/g, ''), // Strip HTML for text version
+        MessageStream: 'broadcast'
       },
       {
         headers: {

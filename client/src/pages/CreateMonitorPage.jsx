@@ -59,7 +59,7 @@ export default function CreateMonitorPage() {
       return `https://${url}`
     }
     
-    // For everything else (like bot9.ai), add https://
+    // For everything else (like example.com), add https://
     return `https://${url}`
   }
 

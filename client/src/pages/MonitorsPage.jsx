@@ -162,23 +162,25 @@ export default function MonitorsPage() {
                 className="block px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <ServerIcon className="h-5 w-5 text-gray-400" />
-                    <div>
+                  <div className="flex items-center space-x-3 flex-1 min-w-0">
+                    <ServerIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
                       <h4 className="text-sm font-medium text-gray-900">{monitor.name}</h4>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(monitor.status)}`}>
-                          {monitor.status === 'checking' && <ArrowPathIcon className="h-3 w-3 mr-1 animate-spin" />}
-                          {monitor.status === 'checking' ? 'Checking...' : monitor.status}
-                        </div>
-                        <p className="text-sm text-gray-500">{monitor.url || monitor.ip}</p>
-                      </div>
+                      <p className="text-sm text-gray-500 truncate">{monitor.url || monitor.ip}</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <span>{formatUptime(monitor.uptimePercentage || 0)}</span>
-                    <span>{formatResponseTime(monitor.avgResponseTime || 0)}</span>
-                    <span>{formatRelativeTime(monitor.lastCheckAt)}</span>
+                  <div className="flex items-center gap-6 ml-4">
+                    <div className="flex items-center justify-center min-w-[80px]">
+                      <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(monitor.status)}`}>
+                        {monitor.status === 'checking' && <ArrowPathIcon className="h-3 w-3 mr-1 animate-spin" />}
+                        {monitor.status === 'checking' ? 'Checking...' : monitor.status}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6 text-sm text-gray-500">
+                      <span className="min-w-[60px] text-right">{formatUptime(monitor.uptimePercentage || 0)}</span>
+                      <span className="min-w-[50px] text-right">{formatResponseTime(monitor.avgResponseTime || 0)}</span>
+                      <span className="min-w-[50px] text-right">{formatRelativeTime(monitor.lastCheckAt)}</span>
+                    </div>
                   </div>
                 </div>
               </Link>
