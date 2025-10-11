@@ -1,0 +1,15 @@
+# robots.txt for Uptime Monitor
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /monitors
+Disallow: /incidents
+Disallow: /alerts
+Disallow: /status-pages
+Disallow: /settings
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://uptimemonitor.com/sitemap.xml
+

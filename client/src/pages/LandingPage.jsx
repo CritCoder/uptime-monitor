@@ -19,6 +19,7 @@ import {
   LockClosedIcon
 } from '@heroicons/react/24/outline'
 import PricingSection from '../components/PricingSection'
+import SEO from '../components/SEO'
 
 const navigation = [
   { name: 'Features', href: '#features', type: 'scroll' },
@@ -137,6 +138,13 @@ export default function LandingPage() {
 
   return (
     <div className="bg-white">
+      <SEO 
+        title="Uptime Monitor - Website & Server Monitoring Made Simple"
+        description="Monitor your websites, APIs, and servers with real-time alerts. Create beautiful status pages, get instant notifications via email, SMS, Slack, Discord, and more. Start free today!"
+        keywords="uptime monitoring, website monitoring, server monitoring, status page, uptime checker, website uptime, API monitoring, downtime alerts, server health monitoring, website availability"
+        canonical="/"
+      />
+      
       {/* 1. Header/Navigation */}
       <header className="fixed inset-x-0 top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <nav className="flex items-center justify-between p-6 lg:px-8 max-w-7xl mx-auto" aria-label="Global">
