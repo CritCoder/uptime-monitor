@@ -169,6 +169,47 @@ async function sendIncidentNotifications(incident, monitor, type) {
       });
     }
 
+    // Also send notifications to all workspace members
+    const monitorWithWorkspaceMembers = await prisma.monitor.findUnique({
+      where: { id: monitor.id },
+      include: {
+        workspace: {
+          include: {
+            members: {
+              include: {
+                user: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (monitorWithWorkspaceMembers?.workspace?.members) {
+      for (const member of monitorWithWorkspaceMembers.workspace.members) {
+        if (member.user?.email) {
+          // Create a virtual alert contact for the workspace member
+          const alertContact = {
+            type: 'email',
+            value: member.user.email,
+            name: member.user.name || 'Workspace Member'
+          };
+
+          // Schedule notification
+          await scheduleNotification('incident', {
+            type,
+            incident,
+            monitor,
+            alertContact,
+            rule: {
+              alertOnDown: true,
+              alertOnUp: true
+            }
+          });
+        }
+      }
+    }
+
     // Also send notifications to enabled integrations
     const monitorWithWorkspace = await prisma.monitor.findUnique({
       where: { id: monitor.id },
