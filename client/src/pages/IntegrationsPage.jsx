@@ -46,26 +46,6 @@ const INTEGRATION_TYPES = [
       { name: 'webhookUrl', label: 'Webhook URL', type: 'url', placeholder: 'https://your-endpoint.com/webhook' },
       { name: 'method', label: 'HTTP Method', type: 'select', options: ['POST', 'GET', 'PUT'] }
     ]
-  },
-  {
-    id: 'email',
-    name: 'Email',
-    icon: '📧',
-    description: 'Email notifications',
-    color: 'from-blue-500 to-cyan-500',
-    fields: [
-      { name: 'email', label: 'Email Address', type: 'email', placeholder: 'alerts@example.com' }
-    ]
-  },
-  {
-    id: 'sms',
-    name: 'SMS',
-    icon: '📱',
-    description: 'Text message alerts',
-    color: 'from-yellow-500 to-orange-500',
-    fields: [
-      { name: 'phoneNumber', label: 'Phone Number', type: 'tel', placeholder: '+1234567890' }
-    ]
   }
 ]
 
