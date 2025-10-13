@@ -1,16 +1,46 @@
+import { useState } from 'react';
+import { toast } from 'sonner';
+
 export default function GoogleSignInButton({ text = 'Continue with Google' }) {
+  const [loading, setLoading] = useState(false);
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-  const handleGoogleSignIn = () => {
-    // Redirect to backend Google OAuth route
-    window.location.href = `${API_BASE_URL}/auth/google`;
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      // Check if Google OAuth is available
+      const response = await fetch(`${API_BASE_URL}/auth/google`, {
+        method: 'GET',
+        redirect: 'manual'
+      });
+
+      if (response.status === 400) {
+        // Google OAuth not configured
+        const errorData = await response.json();
+        toast.error(errorData.message || 'Google Sign-In is not available in development mode');
+        return;
+      }
+
+      if (response.type === 'opaqueredirect' || response.status === 302) {
+        // Redirect to Google OAuth
+        window.location.href = `${API_BASE_URL}/auth/google`;
+      } else {
+        throw new Error('Unexpected response from server');
+      }
+    } catch (error) {
+      console.error('Google OAuth error:', error);
+      toast.error('Google Sign-In is not available in development mode');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <button
       type="button"
       onClick={handleGoogleSignIn}
-      className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+      disabled={loading}
+      className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path
@@ -30,7 +60,7 @@ export default function GoogleSignInButton({ text = 'Continue with Google' }) {
           fill="#EA4335"
         />
       </svg>
-      {text}
+      {loading ? 'Checking...' : text}
     </button>
   );
 }

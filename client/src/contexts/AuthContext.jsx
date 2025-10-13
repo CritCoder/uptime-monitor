@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       return { 
         success: false, 
-        error: error.response?.data?.error || 'Login failed' 
+        error: error.response?.data?.message || error.response?.data?.error || 'Login failed' 
       }
     }
   }
@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       return { 
         success: false, 
-        error: error.response?.data?.error || 'Registration failed' 
+        error: error.response?.data?.message || error.response?.data?.error || 'Registration failed' 
       }
     }
   }

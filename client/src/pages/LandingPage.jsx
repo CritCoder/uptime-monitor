@@ -32,60 +32,60 @@ const navigation = [
 const features = [
   {
     name: 'Multi-Type Monitoring',
-    description: 'Monitor HTTP, HTTPS, Ping, Port, SSL certificates, and more with comprehensive checks.',
+    description: 'HTTP, HTTPS, Ping, Port, SSL, and more.',
     icon: ServerIcon,
   },
   {
     name: 'Real-time Alerts',
-    description: 'Get instant notifications via email, SMS, Slack, Discord, and webhooks when issues occur.',
+    description: 'Email, SMS, Slack, Discord, webhooks.',
     icon: BellIcon,
   },
   {
     name: 'Status Pages',
-    description: 'Create beautiful public status pages to keep your users informed about service health.',
+    description: 'Beautiful public status pages.',
     icon: ChartBarIcon,
   },
   {
     name: 'Advanced Analytics',
-    description: 'Detailed uptime reports, response time trends, and incident analysis to optimize performance.',
+    description: 'Uptime reports and performance insights.',
     icon: ChartBarIcon,
   },
   {
     name: 'Team Collaboration',
-    description: 'Invite team members, assign roles, and collaborate on monitoring across workspaces.',
+    description: 'Invite members, assign roles, collaborate.',
     icon: ShieldCheckIcon,
   },
   {
     name: '99.9% Uptime SLA',
-    description: 'Enterprise-grade infrastructure with 99.9% uptime guarantee for reliable monitoring.',
+    description: 'Enterprise-grade reliability.',
     icon: ClockIcon,
   },
 ]
 
 const integrations = [
-  { name: 'Slack', logo: '💬', description: 'Real-time alerts in your channels' },
-  { name: 'Discord', logo: '🎮', description: 'Monitor notifications for your team' },
-  { name: 'PagerDuty', logo: '📟', description: 'On-call incident management' },
+  { name: 'Slack', logo: '💬', description: 'Channel alerts' },
+  { name: 'Discord', logo: '🎮', description: 'Team notifications' },
+  { name: 'PagerDuty', logo: '📟', description: 'Incident management' },
   { name: 'Webhook', logo: '🔗', description: 'Custom integrations' },
-  { name: 'Email', logo: '📧', description: 'Email notifications' },
-  { name: 'SMS', logo: '📱', description: 'Text message alerts' },
+  { name: 'Email', logo: '📧', description: 'Email alerts' },
+  { name: 'SMS', logo: '📱', description: 'Text alerts' },
 ]
 
 const testimonials = [
   {
-    content: 'Uptime Monitor has been a game-changer for our team. The real-time alerts and beautiful status pages have saved us countless hours.',
+    content: 'Game-changer for our team. Real-time alerts and status pages saved us countless hours.',
     author: 'Sarah Johnson',
     role: 'CTO at TechCorp',
     avatar: '👩‍💼'
   },
   {
-    content: 'The best monitoring solution we have used. Setup was incredibly easy and the dashboard provides all the insights we need.',
+    content: 'Best monitoring solution we\'ve used. Easy setup and comprehensive dashboard.',
     author: 'Michael Chen',
     role: 'DevOps Lead at StartupXYZ',
     avatar: '👨‍💻'
   },
   {
-    content: 'Outstanding support and reliability. Our uptime has improved significantly since switching to this platform.',
+    content: 'Outstanding support and reliability. Our uptime improved significantly.',
     author: 'Emily Rodriguez',
     role: 'Engineering Manager at CloudCo',
     avatar: '👩‍🔬'
@@ -96,22 +96,22 @@ const useCases = [
   {
     icon: RocketLaunchIcon,
     title: 'Startups',
-    description: 'Launch with confidence knowing your services are being monitored 24/7.'
+    description: 'Launch with confidence. 24/7 monitoring.'
   },
   {
     icon: BoltIcon,
     title: 'SaaS Companies',
-    description: 'Keep your customers informed with real-time status updates.'
+    description: 'Keep customers informed with real-time updates.'
   },
   {
     icon: ShieldCheckIcon,
     title: 'Enterprises',
-    description: 'Meet SLA requirements with enterprise-grade monitoring and reporting.'
+    description: 'Meet SLA requirements with enterprise monitoring.'
   },
   {
     icon: CogIcon,
     title: 'Agencies',
-    description: 'Monitor all your client websites from a single dashboard.'
+    description: 'Monitor all client sites from one dashboard.'
   },
 ]
 
@@ -695,28 +695,28 @@ export default function LandingPage() {
             <div>
               <h3 className="text-sm font-semibold leading-6 text-white">Company</h3>
               <ul className="mt-6 space-y-4">
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">About</a></li>
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Blog</a></li>
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Careers</a></li>
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Press</a></li>
+                <li><Link to="/about" className="text-sm leading-6 text-gray-400 hover:text-white">About</Link></li>
+                <li><Link to="/blog" className="text-sm leading-6 text-gray-400 hover:text-white">Blog</Link></li>
+                <li><Link to="/careers" className="text-sm leading-6 text-gray-400 hover:text-white">Careers</Link></li>
+                <li><Link to="/press" className="text-sm leading-6 text-gray-400 hover:text-white">Press</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold leading-6 text-white">Resources</h3>
               <ul className="mt-6 space-y-4">
                 <li><Link to="/docs" className="text-sm leading-6 text-gray-400 hover:text-white">Documentation</Link></li>
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">API Reference</a></li>
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Help Center</a></li>
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Community</a></li>
+                <li><Link to="/help" className="text-sm leading-6 text-gray-400 hover:text-white">Help Center</Link></li>
+                <li><Link to="/community" className="text-sm leading-6 text-gray-400 hover:text-white">Community</Link></li>
+                <li><Link to="/integrations" className="text-sm leading-6 text-gray-400 hover:text-white">Integrations</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold leading-6 text-white">Legal</h3>
               <ul className="mt-6 space-y-4">
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Privacy</a></li>
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Terms</a></li>
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Security</a></li>
-                <li><a href="#" className="text-sm leading-6 text-gray-400 hover:text-white">Compliance</a></li>
+                <li><Link to="/privacy" className="text-sm leading-6 text-gray-400 hover:text-white">Privacy</Link></li>
+                <li><Link to="/terms" className="text-sm leading-6 text-gray-400 hover:text-white">Terms</Link></li>
+                <li><Link to="/security" className="text-sm leading-6 text-gray-400 hover:text-white">Security</Link></li>
+                <li><Link to="/compliance" className="text-sm leading-6 text-gray-400 hover:text-white">Compliance</Link></li>
               </ul>
             </div>
           </div>

@@ -43,7 +43,10 @@ router.post('/register', async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({ error: 'User already exists' });
+      return res.status(400).json({ 
+        error: 'User already exists',
+        message: 'An account with this email address already exists. Please try logging in instead or use a different email address.'
+      });
     }
 
     // Hash password
@@ -132,13 +135,19 @@ router.post('/login', async (req, res) => {
     });
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ 
+        error: 'Invalid credentials',
+        message: 'No account found with this email address. Please check your email or create a new account.'
+      });
     }
 
     // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ 
+        error: 'Invalid credentials',
+        message: 'Incorrect password. Please check your password and try again.'
+      });
     }
 
     // Generate JWT token
@@ -176,7 +185,40 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Verify email
+// Verify email (GET route for email links)
+router.get('/verify-email', async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    if (!token) {
+      return res.status(400).json({ error: 'Verification token required' });
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { emailVerifyToken: token }
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid verification token' });
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        isEmailVerified: true,
+        emailVerifyToken: null
+      }
+    });
+
+    // Redirect to login page with success message
+    res.redirect(`${process.env.CLIENT_URL}/login?verified=true`);
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.redirect(`${process.env.CLIENT_URL}/login?error=verification_failed`);
+  }
+});
+
+// Verify email (POST route for API calls)
 router.post('/verify-email', async (req, res) => {
   try {
     const { token } = req.body;
@@ -445,18 +487,37 @@ router.put('/profile', authenticateToken, async (req, res) => {
 
 // Google OAuth routes
 // Initiate Google OAuth
-router.get('/google', passport.authenticate('google', {
-  scope: ['profile', 'email'],
-  session: false
-}));
+router.get('/google', (req, res) => {
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    return res.status(400).json({ 
+      error: 'Google OAuth not configured',
+      message: 'Google Sign-In is not available in development mode'
+    });
+  }
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    session: false
+  })(req, res);
+});
 
 // Google OAuth callback
-router.get('/google/callback',
+router.get('/google/callback', (req, res) => {
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    return res.status(400).json({ 
+      error: 'Google OAuth not configured',
+      message: 'Google Sign-In is not available in development mode'
+    });
+  }
+  
   passport.authenticate('google', {
     session: false,
     failureRedirect: `${process.env.CLIENT_URL}/login?error=oauth_failed`
-  }),
-  async (req, res) => {
+  })(req, res, async (err) => {
+    if (err) {
+      console.error('Google OAuth callback error:', err);
+      return res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
+    }
+    
     try {
       // Generate JWT token for the authenticated user
       const token = jwt.sign(
@@ -471,7 +532,7 @@ router.get('/google/callback',
       console.error('OAuth callback error:', error);
       res.redirect(`${process.env.CLIENT_URL}/login?error=auth_failed`);
     }
-  }
-);
+  });
+});
 
 export default router;

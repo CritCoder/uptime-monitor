@@ -26,8 +26,8 @@ export const authenticateToken = async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid token' });
     }
 
-    // Check if email is verified
-    if (!user.isEmailVerified) {
+    // Check if email is verified (disabled in development)
+    if (!user.isEmailVerified && process.env.NODE_ENV === 'production') {
       return res.status(403).json({ 
         error: 'Email verification required',
         code: 'EMAIL_NOT_VERIFIED',

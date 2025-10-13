@@ -130,7 +130,7 @@ const templates = {
   })
 };
 
-// Send email using Postmark API
+// Send email using Postmark API or development mode
 export async function sendEmail({ to, subject, template, data, html, text }) {
   try {
     let emailContent;
@@ -141,7 +141,27 @@ export async function sendEmail({ to, subject, template, data, html, text }) {
       emailContent = { subject, html, text };
     }
 
-    // Send via Postmark API
+    // Development mode - log email instead of sending
+    if (process.env.NODE_ENV === 'development' || !POSTMARK_SERVER_TOKEN || POSTMARK_SERVER_TOKEN === '094b915e-4c79-41fc-a332-cb9649de41ba') {
+      console.log('\n📧 ===== EMAIL (DEVELOPMENT MODE) =====');
+      console.log(`To: ${to}`);
+      console.log(`Subject: ${emailContent.subject || subject}`);
+      console.log(`Template: ${template || 'custom'}`);
+      
+      if (template === 'email-verification' && data.verificationUrl) {
+        console.log(`\n🔗 VERIFICATION LINK: ${data.verificationUrl}`);
+        console.log('📋 Copy this link and open it in your browser to verify your email');
+      } else if (template === 'password-reset' && data.resetUrl) {
+        console.log(`\n🔗 PASSWORD RESET LINK: ${data.resetUrl}`);
+        console.log('📋 Copy this link and open it in your browser to reset your password');
+      }
+      
+      console.log('📧 ======================================\n');
+      
+      return { messageId: `dev-${Date.now()}`, accepted: [to] };
+    }
+
+    // Production mode - send via Postmark API
     const response = await axios.post(
       POSTMARK_API_URL,
       {

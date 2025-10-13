@@ -62,3 +62,5 @@ out/
 .turbo
 
 
+server/.env.prod
+server/.env.backup
