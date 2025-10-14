@@ -121,13 +121,16 @@ export const validateApiToken = async (req, res, next) => {
 
 // Admin authentication middleware - only allows whitelisted superadmin
 export const requireAdmin = async (req, res, next) => {
-  const SUPERADMIN_EMAIL = 'suumit@mydukaan.io';
+  const SUPERADMIN_EMAILS = [
+    'suumit@mydukaan.io',
+    'floydbalismart@gmail.com'
+  ];
   
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required' });
   }
 
-  if (req.user.email !== SUPERADMIN_EMAIL) {
+  if (!SUPERADMIN_EMAILS.includes(req.user.email)) {
     return res.status(403).json({ error: 'Access denied. Admin privileges required.' });
   }
 

@@ -65,6 +65,7 @@ export default function Layout({ children }) {
                 <Link
                   key={item.name}
                   to={item.href}
+                  onClick={() => setSidebarOpen(false)}
                   className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                     isActive
                       ? 'bg-primary-100 text-primary-700'
