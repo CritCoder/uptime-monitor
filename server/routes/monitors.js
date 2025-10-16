@@ -636,4 +636,43 @@ router.post('/:id/test', authenticateToken, async (req, res) => {
   }
 });
 
+// Get screenshot for a monitor
+router.get('/:id/screenshot', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if user has access to this monitor
+    const monitor = await prisma.monitor.findFirst({
+      where: {
+        id,
+        workspace: {
+          members: {
+            some: { userId: req.user.id }
+          }
+        }
+      }
+    });
+
+    if (!monitor) {
+      return res.status(404).json({ error: 'Monitor not found' });
+    }
+
+    // Capture screenshot
+    const screenshot = await captureScreenshot(monitor.url, {
+      width: 1280,
+      height: 720,
+      fullPage: false
+    });
+
+    res.json({ 
+      screenshot,
+      url: monitor.url,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Screenshot capture error:', error);
+    res.status(500).json({ error: 'Failed to capture screenshot' });
+  }
+});
+
 export default router;

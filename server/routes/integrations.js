@@ -3,19 +3,17 @@ import { z } from 'zod';
 import { prisma } from '../index.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { sendSlackWebhook } from '../services/notifications.js';
+import { searchLogos, getCompanyLogo, getMultipleLogos } from '../services/logoSearch.js';
 
 const router = express.Router();
 
 // Validation schemas
 const createIntegrationSchema = z.object({
   name: z.string().min(1).max(100),
-  type: z.enum(['slack', 'discord', 'pagerduty', 'webhook', 'email', 'sms']),
+  type: z.enum(['slack', 'webhook']),
   config: z.object({
     webhookUrl: z.string().url().optional(),
     channel: z.string().optional(),
-    email: z.string().email().optional(),
-    phoneNumber: z.string().optional(),
-    integrationKey: z.string().optional(),
     method: z.enum(['POST', 'GET', 'PUT']).optional()
   }),
   enabled: z.boolean().default(true)
@@ -135,8 +133,29 @@ router.post('/:id/test', authenticateToken, async (req, res) => {
           }
         ]
       );
+    } else if (integration.type === 'webhook') {
+      // Test webhook by sending a POST request
+      const testPayload = {
+        event: 'test',
+        message: 'This is a test notification from your uptime monitoring system.',
+        timestamp: new Date().toISOString(),
+        status: 'testing'
+      };
+
+      const method = config.method || 'POST';
+      const response = await fetch(config.webhookUrl, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'UptimeMonitor/1.0'
+        },
+        body: method !== 'GET' ? JSON.stringify(testPayload) : undefined
+      });
+
+      if (!response.ok) {
+        throw new Error(`Webhook test failed: ${response.status} ${response.statusText}`);
+      }
     } else {
-      // For other integrations, we'll add support later
       return res.status(400).json({ error: `Test not implemented for ${integration.type} yet` });
     }
 
@@ -223,6 +242,57 @@ router.patch('/:id', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Update integration error:', error);
     res.status(500).json({ error: 'Failed to update integration' });
+  }
+});
+
+// Search for company logos
+router.get('/logos/search', authenticateToken, async (req, res) => {
+  try {
+    const { q: query, limit = 5 } = req.query;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter is required' });
+    }
+
+    const logos = await searchLogos(query, parseInt(limit));
+    res.json({ logos });
+  } catch (error) {
+    console.error('Logo search error:', error);
+    res.status(500).json({ error: 'Failed to search logos' });
+  }
+});
+
+// Get logo for a specific company
+router.get('/logos/:company', authenticateToken, async (req, res) => {
+  try {
+    const { company } = req.params;
+    const logo = await getCompanyLogo(company);
+    
+    res.json({ 
+      company, 
+      logo,
+      found: !!logo 
+    });
+  } catch (error) {
+    console.error('Get company logo error:', error);
+    res.status(500).json({ error: 'Failed to get company logo' });
+  }
+});
+
+// Get multiple logos at once
+router.post('/logos/batch', authenticateToken, async (req, res) => {
+  try {
+    const { companies } = req.body;
+
+    if (!Array.isArray(companies)) {
+      return res.status(400).json({ error: 'Companies must be an array' });
+    }
+
+    const logos = await getMultipleLogos(companies);
+    res.json({ logos });
+  } catch (error) {
+    console.error('Batch logo search error:', error);
+    res.status(500).json({ error: 'Failed to get logos' });
   }
 });
 
