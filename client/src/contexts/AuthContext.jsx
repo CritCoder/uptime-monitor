@@ -51,8 +51,20 @@ export function AuthProvider({ children }) {
   const register = async (userData) => {
     try {
       const response = await api.post('/auth/register', userData)
-      return { success: true, message: response.data.message }
+      console.log('Registration response:', response.data)
+      const { token, user, message } = response.data
+      
+      // If registration includes a token, automatically log the user in
+      if (token && user) {
+        console.log('Auto-logging in user:', user)
+        localStorage.setItem('token', token)
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+        setUser(user)
+      }
+      
+      return { success: true, message, user, token }
     } catch (error) {
+      console.error('Registration error:', error)
       return { 
         success: false, 
         error: error.response?.data?.message || error.response?.data?.error || 'Registration failed' 

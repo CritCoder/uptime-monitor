@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import { formatUptime, formatResponseTime, getStatusColor, formatRelativeTime } from '../lib/utils'
+import { useAuth } from '../contexts/AuthContext'
+import FreeTrialWelcome from '../components/FreeTrialWelcome'
 import {
   ServerIcon,
   ExclamationTriangleIcon,
@@ -15,6 +17,20 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 export default function DashboardPage() {
   const [timeRange, setTimeRange] = useState('24h')
+  const [showTrialWelcome, setShowTrialWelcome] = useState(false)
+  const { user } = useAuth()
+  
+  // Check if user is new and should see trial welcome
+  useEffect(() => {
+    if (user?.isNewUser) {
+      setShowTrialWelcome(true)
+      // Remove the isNewUser flag after showing the welcome
+      // This prevents it from showing again on page refresh
+      const updatedUser = { ...user }
+      delete updatedUser.isNewUser
+      // You might want to update this in the context or localStorage
+    }
+  }, [user])
   
   // Fetch dashboard data
   const { data: dashboardData, isLoading, error } = useQuery({
@@ -61,6 +77,11 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {/* Free Trial Welcome Component */}
+      {showTrialWelcome && (
+        <FreeTrialWelcome onAcknowledge={() => setShowTrialWelcome(false)} />
+      )}
+      
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

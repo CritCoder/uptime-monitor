@@ -28,9 +28,11 @@ export default function RegisterPage() {
       }
       
       const result = await registerUser(registrationData)
+      console.log('Registration result:', result)
       if (result.success) {
-        toast.success(result.message || 'Registration successful! Please check your email to verify your account.')
-        navigate('/login')
+        toast.success(result.message || 'Registration successful! Welcome to your free trial!')
+        console.log('Navigating to dashboard...')
+        navigate('/dashboard')
       } else {
         // Show detailed error message
         const errorMsg = result.error || 'Registration failed. Please try again.'
