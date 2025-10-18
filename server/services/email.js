@@ -3,7 +3,7 @@ import axios from 'axios';
 // Postmark API configuration
 const POSTMARK_API_URL = 'https://api.postmarkapp.com/email';
 const POSTMARK_SERVER_TOKEN = process.env.POSTMARK_SERVER_TOKEN || '094b915e-4c79-41fc-a332-cb9649de41ba';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@uptimemonitor.live';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'helpme@bot9.ai';
 
 // Email templates
 const templates = {
@@ -142,7 +142,8 @@ export async function sendEmail({ to, subject, template, data, html, text }) {
     }
 
     // Development mode - log email instead of sending
-    if (process.env.NODE_ENV === 'development' || !POSTMARK_SERVER_TOKEN || POSTMARK_SERVER_TOKEN === '094b915e-4c79-41fc-a332-cb9649de41ba') {
+    // Force production mode if we have a valid Postmark token
+    if ((process.env.NODE_ENV === 'development' || !POSTMARK_SERVER_TOKEN || POSTMARK_SERVER_TOKEN === '094b915e-4c79-41fc-a332-cb9649de41ba') && process.env.FORCE_EMAIL_DEV !== 'false') {
       console.log('\n📧 ===== EMAIL (DEVELOPMENT MODE) =====');
       console.log(`To: ${to}`);
       console.log(`Subject: ${emailContent.subject || subject}`);

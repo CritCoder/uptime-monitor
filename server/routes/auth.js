@@ -98,14 +98,23 @@ router.post('/register', async (req, res) => {
       console.warn('Email sending failed (non-critical):', emailError.message);
     }
 
+    // Generate JWT token for immediate login
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    )
+
     res.status(201).json({
       success: true,
-      message: 'User created successfully. Please check your email to verify your account.',
+      message: 'User created successfully. Welcome to your free trial!',
+      token,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
-        timezone: user.timezone
+        timezone: user.timezone,
+        isNewUser: true
       }
     });
   } catch (error) {
