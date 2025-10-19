@@ -10,26 +10,47 @@ import passport from '../config/passport.js';
 
 const router = express.Router();
 
-// Validation schemas
+// Validation schemas with sanitization
 const registerSchema = z.object({
-  name: z.string().min(2).max(50),
-  email: z.string().email(),
-  password: z.string().min(8).max(100),
+  name: z.string()
+    .trim()
+    .min(2, 'Name must be at least 2 characters')
+    .max(50, 'Name cannot exceed 50 characters')
+    .refine(val => val.length > 0, { message: 'Name cannot be empty or contain only spaces' })
+    .refine(val => !/\s{2,}/.test(val), { message: 'Name cannot contain multiple consecutive spaces' }),
+  email: z.string()
+    .trim()
+    .toLowerCase()
+    .email('Invalid email address')
+    .refine(val => val.length > 0, { message: 'Email cannot be empty' }),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(100, 'Password cannot exceed 100 characters'),
   timezone: z.string().optional().default('UTC')
 });
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1)
+  email: z.string()
+    .trim()
+    .toLowerCase()
+    .email('Invalid email address')
+    .refine(val => val.length > 0, { message: 'Email cannot be empty' }),
+  password: z.string()
+    .min(1, 'Password is required')
 });
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email()
+  email: z.string()
+    .trim()
+    .toLowerCase()
+    .email('Invalid email address')
 });
 
 const resetPasswordSchema = z.object({
-  token: z.string(),
-  password: z.string().min(8).max(100)
+  token: z.string().trim(),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(100, 'Password cannot exceed 100 characters')
 });
 
 // Register
@@ -467,7 +488,25 @@ router.get('/me', authenticateToken, async (req, res) => {
 // Update user profile
 router.put('/profile', authenticateToken, async (req, res) => {
   try {
-    const { name, timezone, avatarUrl } = req.body;
+    let { name, timezone, avatarUrl } = req.body;
+
+    // Sanitize inputs
+    if (name) {
+      name = name.trim();
+      if (name.length === 0) {
+        return res.status(400).json({ error: 'Name cannot be empty or contain only spaces' });
+      }
+      if (/\s{2,}/.test(name)) {
+        return res.status(400).json({ error: 'Name cannot contain multiple consecutive spaces' });
+      }
+      if (name.length < 2 || name.length > 50) {
+        return res.status(400).json({ error: 'Name must be between 2 and 50 characters' });
+      }
+    }
+
+    if (timezone) {
+      timezone = timezone.trim();
+    }
 
     const user = await prisma.user.update({
       where: { id: req.user.id },

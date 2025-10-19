@@ -2,16 +2,20 @@ import nodemailer from 'nodemailer';
 import twilio from 'twilio';
 import axios from 'axios';
 
-// Email transporter
-const emailTransporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
+// Email transporter - use Postmark if available, otherwise fall back to SMTP
+const usePostmark = process.env.POSTMARK_SERVER_TOKEN && process.env.POSTMARK_SERVER_TOKEN !== 'your-postmark-server-token';
+
+const emailTransporter = usePostmark
+  ? null // Will use Postmark API directly
+  : nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    });
 
 // Twilio client (only if credentials are provided)
 const twilioClient = process.env.TWILIO_ACCOUNT_SID && 
@@ -24,9 +28,9 @@ const twilioClient = process.env.TWILIO_ACCOUNT_SID &&
 async function sendEmailNotification(alertContact, data) {
   try {
     const { incident, monitor, type } = data;
-    
+
     let subject, html;
-    
+
     if (type === 'incident_started') {
       subject = `🚨 ${monitor.name} is down`;
       html = `
@@ -50,14 +54,32 @@ async function sendEmailNotification(alertContact, data) {
       `;
     }
 
-    await emailTransporter.sendMail({
-      from: process.env.SMTP_FROM || 'noreply@uptime-monitor.com',
-      to: alertContact.value,
-      subject,
-      html
-    });
-
-    console.log(`📧 Email sent to ${alertContact.value}`);
+    if (usePostmark) {
+      // Use Postmark API
+      await axios.post('https://api.postmarkapp.com/email', {
+        From: process.env.FROM_EMAIL || 'helpme@bot9.ai',
+        To: alertContact.value,
+        Subject: subject,
+        HtmlBody: html,
+        MessageStream: 'outbound'
+      }, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Postmark-Server-Token': process.env.POSTMARK_SERVER_TOKEN
+        }
+      });
+      console.log(`📧 Email sent via Postmark to ${alertContact.value}`);
+    } else {
+      // Use SMTP
+      await emailTransporter.sendMail({
+        from: process.env.SMTP_FROM || 'noreply@uptime-monitor.com',
+        to: alertContact.value,
+        subject,
+        html
+      });
+      console.log(`📧 Email sent via SMTP to ${alertContact.value}`);
+    }
   } catch (error) {
     console.error('Email notification failed:', error);
     throw error;
@@ -339,6 +361,52 @@ export async function sendSlackWebhook(webhookUrl, title, text, color = '#36A64F
     console.log(`💬 Slack notification sent to webhook`);
   } catch (error) {
     console.error('Slack notification failed:', error);
+    throw error;
+  }
+}
+
+// Send Discord notification with webhook URL (for integrations)
+export async function sendDiscordWebhook(webhookUrl, title, description, color = 0x36A64F, fields = []) {
+  try {
+    const payload = {
+      embeds: [{
+        title,
+        description,
+        color,
+        fields: fields.map(f => ({ name: f.title, value: f.value, inline: f.short || false })),
+        footer: { text: 'Uptime Monitor' },
+        timestamp: new Date().toISOString()
+      }]
+    };
+
+    await axios.post(webhookUrl, payload);
+    console.log(`💬 Discord notification sent to webhook`);
+  } catch (error) {
+    console.error('Discord notification failed:', error);
+    throw error;
+  }
+}
+
+// Send custom webhook notification (for integrations)
+export async function sendCustomWebhook(webhookUrl, method = 'POST', data = {}) {
+  try {
+    const config = {
+      method: method.toLowerCase(),
+      url: webhookUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Uptime-Monitor/1.0'
+      }
+    };
+
+    if (method.toUpperCase() !== 'GET') {
+      config.data = data;
+    }
+
+    await axios(config);
+    console.log(`🔗 Webhook sent to ${webhookUrl}`);
+  } catch (error) {
+    console.error('Webhook notification failed:', error);
     throw error;
   }
 }

@@ -16,7 +16,7 @@ export function EmptyHeader({ children }) {
 
 export function EmptyMedia({ children, variant = 'icon' }) {
   return (
-    <div className={`${variant === 'icon' ? 'w-12 h-12 text-gray-400' : ''} mb-4`}>
+    <div className={`${variant === 'icon' ? 'w-12 h-12 text-gray-400 dark:text-gray-500' : ''} mb-4`}>
       {children}
     </div>
   )
@@ -24,7 +24,7 @@ export function EmptyMedia({ children, variant = 'icon' }) {
 
 export function EmptyTitle({ children }) {
   return (
-    <h3 className="text-xl font-semibold text-gray-900">
+    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
       {children}
     </h3>
   )
@@ -32,7 +32,7 @@ export function EmptyTitle({ children }) {
 
 export function EmptyDescription({ children }) {
   return (
-    <p className="px-6 pt-2 pb-4 text-center text-gray-500">
+    <p className="px-6 pt-2 pb-4 text-center text-gray-500 dark:text-gray-400">
       {children}
     </p>
   )

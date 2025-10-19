@@ -1,7 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import { useAuth } from './hooks/useAuth'
 import { useSocket } from './hooks/useSocket'
 import Layout from './components/Layout'
+import AnimatedPage from './components/AnimatedPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -40,6 +42,7 @@ import { Toaster } from './components/ui/sonner'
 
 function App() {
   const { user, loading } = useAuth()
+  const location = useLocation()
   useSocket()
 
   if (loading) {
@@ -49,52 +52,54 @@ function App() {
   return (
     <>
       <Toaster />
-    <Routes>
-      {/* Public routes */}
-      <Route path="/" element={!user ? <LandingPage /> : <Navigate to="/dashboard" />} />
-      <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/dashboard" />} />
-      <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/dashboard" />} />
-      <Route path="/forgot-password" element={!user ? <ForgotPasswordPage /> : <Navigate to="/dashboard" />} />
-      <Route path="/verify-email" element={<VerifyEmailPage />} />
-      <Route path="/auth/callback" element={<AuthCallbackPage />} />
-      <Route path="/docs" element={<DocsPage />} />
-      <Route path="/status/:slug" element={<PublicStatusPage />} />
-      
-      {/* Company pages */}
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/blog" element={<BlogPage />} />
-      <Route path="/careers" element={<CareersPage />} />
-      <Route path="/press" element={<PressPage />} />
-      
-      {/* Resources pages */}
-      <Route path="/help" element={<HelpCenterPage />} />
-      <Route path="/community" element={<CommunityPage />} />
-      <Route path="/api" element={<APIReferencePage />} />
-      
-      {/* Legal pages */}
-      <Route path="/privacy" element={<PrivacyPage />} />
-      <Route path="/terms" element={<TermsPage />} />
-      <Route path="/security" element={<SecurityPage />} />
-      <Route path="/compliance" element={<CompliancePage />} />
-      
-      {/* Protected routes */}
-      <Route path="/dashboard" element={user ? <Layout><DashboardPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/monitors" element={user ? <Layout><MonitorsPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/monitors/create" element={user ? <Layout><CreateMonitorPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/monitors/:id" element={user ? <Layout><MonitorDetailPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/monitors/:id/edit" element={user ? <Layout><CreateMonitorPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/incidents" element={user ? <Layout><IncidentsPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/incidents/:id" element={user ? <Layout><IncidentDetailPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/alerts" element={user ? <Layout><AlertsPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/status-pages" element={user ? <Layout><StatusPagesPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/status-pages/create" element={user ? <Layout><StatusPageDetailPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/status-pages/:id" element={user ? <Layout><StatusPageDetailPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/integrations" element={user ? <Layout><IntegrationsPage /></Layout> : <Navigate to="/login" />} />
-      <Route path="/settings" element={user ? <Layout><SettingsPage /></Layout> : <Navigate to="/login" />} />
-      
-      {/* Admin route */}
-      <Route path="/admin" element={user ? <AdminPage /> : <Navigate to="/login" />} />
-    </Routes>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {/* Public routes */}
+          <Route path="/" element={!user ? <AnimatedPage><LandingPage /></AnimatedPage> : <Navigate to="/dashboard" />} />
+          <Route path="/login" element={!user ? <AnimatedPage><LoginPage /></AnimatedPage> : <Navigate to="/dashboard" />} />
+          <Route path="/register" element={!user ? <AnimatedPage><RegisterPage /></AnimatedPage> : <Navigate to="/dashboard" />} />
+          <Route path="/forgot-password" element={!user ? <AnimatedPage><ForgotPasswordPage /></AnimatedPage> : <Navigate to="/dashboard" />} />
+          <Route path="/verify-email" element={<AnimatedPage><VerifyEmailPage /></AnimatedPage>} />
+          <Route path="/auth/callback" element={<AnimatedPage><AuthCallbackPage /></AnimatedPage>} />
+          <Route path="/docs" element={<AnimatedPage><DocsPage /></AnimatedPage>} />
+          <Route path="/status/:slug" element={<AnimatedPage><PublicStatusPage /></AnimatedPage>} />
+
+          {/* Company pages */}
+          <Route path="/about" element={<AnimatedPage><AboutPage /></AnimatedPage>} />
+          <Route path="/blog" element={<AnimatedPage><BlogPage /></AnimatedPage>} />
+          <Route path="/careers" element={<AnimatedPage><CareersPage /></AnimatedPage>} />
+          <Route path="/press" element={<AnimatedPage><PressPage /></AnimatedPage>} />
+
+          {/* Resources pages */}
+          <Route path="/help" element={<AnimatedPage><HelpCenterPage /></AnimatedPage>} />
+          <Route path="/community" element={<AnimatedPage><CommunityPage /></AnimatedPage>} />
+          <Route path="/api" element={<AnimatedPage><APIReferencePage /></AnimatedPage>} />
+
+          {/* Legal pages */}
+          <Route path="/privacy" element={<AnimatedPage><PrivacyPage /></AnimatedPage>} />
+          <Route path="/terms" element={<AnimatedPage><TermsPage /></AnimatedPage>} />
+          <Route path="/security" element={<AnimatedPage><SecurityPage /></AnimatedPage>} />
+          <Route path="/compliance" element={<AnimatedPage><CompliancePage /></AnimatedPage>} />
+
+          {/* Protected routes */}
+          <Route path="/dashboard" element={user ? <Layout><AnimatedPage><DashboardPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/monitors" element={user ? <Layout><AnimatedPage><MonitorsPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/monitors/create" element={user ? <Layout><AnimatedPage><CreateMonitorPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/monitors/:id" element={user ? <Layout><AnimatedPage><MonitorDetailPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/monitors/:id/edit" element={user ? <Layout><AnimatedPage><CreateMonitorPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/incidents" element={user ? <Layout><AnimatedPage><IncidentsPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/incidents/:id" element={user ? <Layout><AnimatedPage><IncidentDetailPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/alerts" element={user ? <Layout><AnimatedPage><AlertsPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/status-pages" element={user ? <Layout><AnimatedPage><StatusPagesPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/status-pages/create" element={user ? <Layout><AnimatedPage><StatusPageDetailPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/status-pages/:id" element={user ? <Layout><AnimatedPage><StatusPageDetailPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/integrations" element={user ? <Layout><AnimatedPage><IntegrationsPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+          <Route path="/settings" element={user ? <Layout><AnimatedPage><SettingsPage /></AnimatedPage></Layout> : <Navigate to="/login" />} />
+
+          {/* Admin route */}
+          <Route path="/admin" element={user ? <AnimatedPage><AdminPage /></AnimatedPage> : <Navigate to="/login" />} />
+        </Routes>
+      </AnimatePresence>
     </>
   )
 }

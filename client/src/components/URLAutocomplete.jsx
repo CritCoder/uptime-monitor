@@ -1,15 +1,38 @@
 import { useState, useEffect, useRef } from 'react'
 import { GlobeAltIcon } from '@heroicons/react/24/outline'
 
+// Skeleton loader component
+function FaviconSkeleton() {
+  return (
+    <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-gray-200 rounded overflow-hidden animate-pulse">
+      <div className="w-4 h-4 bg-gray-300 rounded"></div>
+    </div>
+  )
+}
+
 // Favicon component with error handling and multiple fallbacks
 function FaviconImage({ domain }) {
   const [imageIndex, setImageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [allFailed, setAllFailed] = useState(false)
+
+  // Check if domain has a valid TLD (at least contains a dot)
+  const hasValidTLD = domain && domain.includes('.')
+
+  // If no valid TLD, show generic icon
+  if (!hasValidTLD) {
+    return (
+      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-gray-100 rounded">
+        <GlobeAltIcon className="w-4 h-4 text-gray-400" />
+      </div>
+    )
+  }
 
   // Try multiple favicon sources in order
   const faviconSources = [
-    `https://logo.clearbit.com/${domain}`,
-    `https://www.google.com/s2/favicons?domain=${domain}&sz=32`,
+    `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+    `https://favicon.im/${domain}?larger=true`,
     `https://icons.duckduckgo.com/ip3/${domain}.ico`,
     `https://${domain}/favicon.ico`
   ]
@@ -20,13 +43,28 @@ function FaviconImage({ domain }) {
     if (imageIndex < faviconSources.length - 1) {
       setImageIndex(imageIndex + 1)
       setIsLoading(true)
+      setImageLoaded(false)
     } else {
       setIsLoading(false)
+      setImageLoaded(false)
+      setAllFailed(true)
     }
   }
 
   const handleLoad = () => {
     setIsLoading(false)
+    setImageLoaded(true)
+    setAllFailed(false)
+  }
+
+  // Show skeleton while loading
+  if (isLoading && !imageLoaded) {
+    return <FaviconSkeleton />
+  }
+
+  // Show skeleton if all sources failed
+  if (allFailed) {
+    return <FaviconSkeleton />
   }
 
   return (
@@ -38,11 +76,7 @@ function FaviconImage({ domain }) {
         className="w-full h-full object-contain"
         onLoad={handleLoad}
         onError={handleError}
-        style={{ display: isLoading && imageIndex >= faviconSources.length - 1 ? 'none' : 'block' }}
       />
-      {isLoading && imageIndex >= faviconSources.length - 1 && (
-        <GlobeAltIcon className="h-4 w-4 text-gray-400" />
-      )}
     </div>
   )
 }
@@ -96,29 +130,34 @@ export default function URLAutocomplete({ value, onChange, onBlur, error, placeh
     const suggestions = []
     const cleanInput = input.replace(/^https?:\/\//, '').replace(/^www\./, '')
 
+    // Helper to get domain for favicon (try to extract clean domain from any URL format)
+    const getDomainForFavicon = (url) => {
+      return extractDomain(url)
+    }
+
     // Add variations of the input
     suggestions.push({
-      domain: cleanInput,
+      domain: getDomainForFavicon(cleanInput),
       display: cleanInput,
       url: cleanInput
     })
 
     if (!cleanInput.startsWith('www.')) {
       suggestions.push({
-        domain: cleanInput,
+        domain: getDomainForFavicon(`www.${cleanInput}`),
         display: `www.${cleanInput}`,
         url: `www.${cleanInput}`
       })
     }
 
     suggestions.push({
-      domain: cleanInput,
+      domain: getDomainForFavicon(cleanInput),
       display: `https://${cleanInput}`,
       url: `https://${cleanInput}`
     })
 
     suggestions.push({
-      domain: cleanInput,
+      domain: getDomainForFavicon(cleanInput),
       display: `https://www.${cleanInput}`,
       url: `https://www.${cleanInput}`
     })

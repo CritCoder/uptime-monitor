@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -9,19 +9,47 @@ import GoogleSignInButton from '../components/GoogleSignInButton'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
+  const [showCreateAccount, setShowCreateAccount] = useState(false)
+  const [attemptedEmail, setAttemptedEmail] = useState('')
   const { login } = useAuth()
   const navigate = useNavigate()
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const location = useLocation()
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm()
+
+  // Pre-fill email if passed from register page
+  useEffect(() => {
+    if (location.state?.email) {
+      setValue('email', location.state.email)
+    }
+  }, [location.state, setValue])
 
   const onSubmit = async (data) => {
     setLoading(true)
+    setShowCreateAccount(false)
     try {
-      const result = await login(data.email, data.password)
+      // Sanitize inputs
+      const sanitizedData = {
+        email: data.email?.trim().toLowerCase() || '',
+        password: data.password || ''
+      }
+
+      setAttemptedEmail(sanitizedData.email)
+
+      const result = await login(sanitizedData.email, sanitizedData.password)
       if (result.success) {
         toast.success('Login successful!')
         navigate('/dashboard')
       } else {
-        toast.error(result.error || 'Login failed. Please check your credentials.')
+        // Check if account doesn't exist
+        if (result.error && (
+          result.error.includes('No account found') ||
+          result.error.includes('not found') ||
+          result.error.includes('does not exist')
+        )) {
+          setShowCreateAccount(true)
+        } else {
+          toast.error(result.error || 'Login failed. Please check your credentials.')
+        }
       }
     } catch (error) {
       console.error('Login error:', error)
@@ -29,6 +57,10 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCreateAccount = () => {
+    navigate('/register', { state: { email: attemptedEmail } })
   }
 
   return (
@@ -58,6 +90,9 @@ export default function LoginPage() {
               <input
                 {...register('email', {
                   required: 'Email is required',
+                  validate: {
+                    notEmpty: value => value.trim().length > 0 || 'Email cannot be empty or contain only spaces'
+                  },
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: 'Invalid email address'
@@ -156,6 +191,26 @@ export default function LoginPage() {
             </div>
           </div>
         </form>
+
+        {/* Account doesn't exist prompt */}
+        {showCreateAccount && (
+          <div className="mt-6 p-4 bg-primary-50 border border-primary-200 rounded-lg">
+            <div className="text-center">
+              <p className="text-sm font-medium text-primary-900 mb-3">
+                No account found with email: <span className="font-semibold">{attemptedEmail}</span>
+              </p>
+              <p className="text-sm text-primary-700 mb-4">
+                Would you like to create a new account?
+              </p>
+              <button
+                onClick={handleCreateAccount}
+                className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              >
+                Create Account with {attemptedEmail}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

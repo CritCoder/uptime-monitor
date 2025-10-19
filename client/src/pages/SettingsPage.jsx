@@ -31,17 +31,17 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600">Manage your account settings</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
+        <p className="text-gray-600 dark:text-gray-400">Manage your account settings</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Profile Settings */}
         <div className="card p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Profile</h3>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Profile</h3>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
               <input
                 {...register('name', { required: 'Name is required' })}
                 className="input mt-1"
@@ -52,17 +52,17 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
               <input
                 type="email"
                 value={user?.email || ''}
                 disabled
-                className="input mt-1 bg-gray-50"
+                className="input mt-1 bg-gray-50 dark:bg-gray-700"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Timezone</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Timezone</label>
               <select {...register('timezone')} className="select mt-1">
                 <option value="UTC">UTC</option>
                 <option value="America/New_York">Eastern Time</option>
@@ -87,23 +87,23 @@ export default function SettingsPage() {
 
         {/* Account Info */}
         <div className="card p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Account</h3>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Account</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Plan</label>
-              <p className="mt-1 text-sm text-gray-900">{user?.plan || 'Free'}</p>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Plan</label>
+              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">{user?.plan || 'Free'}</p>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email Verified</label>
-              <p className="mt-1 text-sm text-gray-900">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email Verified</label>
+              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                 {user?.isEmailVerified ? 'Yes' : 'No'}
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Member Since</label>
-              <p className="mt-1 text-sm text-gray-900">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Member Since</label>
+              <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                 {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
               </p>
             </div>

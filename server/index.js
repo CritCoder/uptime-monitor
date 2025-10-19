@@ -31,6 +31,7 @@ import integrationsRoutes from './routes/integrations.js';
 import { initializeQueues } from './services/queue.js';
 import { initializeSocket } from './services/socket.js';
 import { startMonitorScheduler } from './services/scheduler.js';
+import { verifyEmailConfig } from './services/email.js';
 
 dotenv.config();
 
@@ -144,9 +145,12 @@ app.use('*', (req, res) => {
 // Initialize services
 async function initializeApp() {
   try {
+    // Verify email configuration
+    await verifyEmailConfig();
+
     // Initialize queues
     const queues = await initializeQueues();
-    
+
     // Update Bull Board with queues (disabled for now)
     // const bullAdapters = queues.map(queue => new BullAdapter(queue));
     // createBullBoard({

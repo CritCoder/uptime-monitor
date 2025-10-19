@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -9,37 +9,72 @@ import GoogleSignInButton from '../components/GoogleSignInButton'
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
+  const [attemptedEmail, setAttemptedEmail] = useState('')
   const { register: registerUser } = useAuth()
   const navigate = useNavigate()
-  const { register, handleSubmit, formState: { errors }, watch } = useForm()
+  const location = useLocation()
+  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm()
 
   const password = watch('password')
 
+  // Pre-fill email if passed from login page
+  useEffect(() => {
+    if (location.state?.email) {
+      setValue('email', location.state.email)
+    }
+  }, [location.state, setValue])
+
   const onSubmit = async (data) => {
     setLoading(true)
+    setShowLoginPrompt(false)
     try {
       // Automatically detect user's timezone
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
-      
-      // Add timezone to registration data
-      const registrationData = {
-        ...data,
+
+      // Sanitize inputs
+      const sanitizedData = {
+        name: data.name?.trim() || '',
+        email: data.email?.trim().toLowerCase() || '',
+        password: data.password || '', // Don't trim passwords - spaces might be intentional
         timezone
       }
-      
-      const result = await registerUser(registrationData)
+
+      // Validate that fields are not empty after trimming
+      if (!sanitizedData.name) {
+        toast.error('Name cannot be empty or contain only spaces')
+        setLoading(false)
+        return
+      }
+      if (!sanitizedData.email) {
+        toast.error('Email cannot be empty or contain only spaces')
+        setLoading(false)
+        return
+      }
+
+      setAttemptedEmail(sanitizedData.email)
+
+      const result = await registerUser(sanitizedData)
       console.log('Registration result:', result)
       if (result.success) {
         toast.success(result.message || 'Registration successful! Welcome to your free trial!')
         console.log('Navigating to dashboard...')
         navigate('/dashboard')
       } else {
-        // Show detailed error message
-        const errorMsg = result.error || 'Registration failed. Please try again.'
-        if (typeof result.error === 'object' && result.error.details) {
-          toast.error(result.error.details.map(d => d.message).join(', '))
+        // Check if account already exists
+        if (result.error && (
+          result.error.includes('already exists') ||
+          result.error.includes('User already exists')
+        )) {
+          setShowLoginPrompt(true)
         } else {
-          toast.error(errorMsg)
+          // Show detailed error message
+          const errorMsg = result.error || 'Registration failed. Please try again.'
+          if (typeof result.error === 'object' && result.error.details) {
+            toast.error(result.error.details.map(d => d.message).join(', '))
+          } else {
+            toast.error(errorMsg)
+          }
         }
       }
     } catch (error) {
@@ -48,6 +83,10 @@ export default function RegisterPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleGoToLogin = () => {
+    navigate('/login', { state: { email: attemptedEmail } })
   }
 
   return (
@@ -91,7 +130,13 @@ export default function RegisterPage() {
                 Full name
               </label>
               <input
-                {...register('name', { required: 'Name is required' })}
+                {...register('name', {
+                  required: 'Name is required',
+                  validate: {
+                    notEmpty: value => value.trim().length > 0 || 'Name cannot be empty or contain only spaces',
+                    noMultipleSpaces: value => !/\s{2,}/.test(value.trim()) || 'Name cannot contain multiple consecutive spaces'
+                  }
+                })}
                 type="text"
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 bg-white rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 placeholder="John Doe"
@@ -108,6 +153,9 @@ export default function RegisterPage() {
               <input
                 {...register('email', {
                   required: 'Email is required',
+                  validate: {
+                    notEmpty: value => value.trim().length > 0 || 'Email cannot be empty or contain only spaces'
+                  },
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: 'Invalid email address'
@@ -200,6 +248,26 @@ export default function RegisterPage() {
             </button>
           </div>
         </form>
+
+        {/* Account already exists prompt */}
+        {showLoginPrompt && (
+          <div className="mt-6 p-4 bg-primary-50 border border-primary-200 rounded-lg">
+            <div className="text-center">
+              <p className="text-sm font-medium text-primary-900 mb-3">
+                An account already exists with email: <span className="font-semibold">{attemptedEmail}</span>
+              </p>
+              <p className="text-sm text-primary-700 mb-4">
+                Would you like to log in instead?
+              </p>
+              <button
+                onClick={handleGoToLogin}
+                className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              >
+                Log In with {attemptedEmail}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

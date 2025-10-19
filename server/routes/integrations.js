@@ -2,7 +2,7 @@ import express from 'express';
 import { z } from 'zod';
 import { prisma } from '../index.js';
 import { authenticateToken } from '../middleware/auth.js';
-import { sendSlackWebhook } from '../services/notifications.js';
+import { sendSlackWebhook, sendDiscordWebhook, sendCustomWebhook } from '../services/notifications.js';
 
 const router = express.Router();
 
@@ -134,6 +134,42 @@ router.post('/:id/test', authenticateToken, async (req, res) => {
             short: true
           }
         ]
+      );
+    } else if (integration.type === 'discord') {
+      await sendDiscordWebhook(
+        config.webhookUrl,
+        '🧪 Test Notification',
+        'This is a test notification from your uptime monitoring system.',
+        0x36A64F, // Green color
+        [
+          {
+            title: 'Status',
+            value: 'Testing',
+            short: true
+          },
+          {
+            title: 'Time',
+            value: new Date().toLocaleString(),
+            short: true
+          }
+        ]
+      );
+    } else if (integration.type === 'webhook') {
+      const testData = {
+        type: 'test',
+        message: 'This is a test notification from your uptime monitoring system',
+        status: 'testing',
+        timestamp: new Date().toISOString(),
+        monitor: {
+          name: 'Test Monitor',
+          url: 'https://example.com'
+        }
+      };
+
+      await sendCustomWebhook(
+        config.webhookUrl,
+        config.method || 'POST',
+        testData
       );
     } else {
       // For other integrations, we'll add support later

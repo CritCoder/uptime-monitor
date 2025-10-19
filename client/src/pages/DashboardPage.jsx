@@ -66,8 +66,8 @@ export default function DashboardPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-red-600 mb-2">Error loading dashboard</h2>
-          <p className="text-gray-600">{error.message}</p>
+          <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Error loading dashboard</h2>
+          <p className="text-gray-600 dark:text-gray-400">{error.message}</p>
         </div>
       </div>
     )
@@ -85,14 +85,14 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">Monitor your services and track uptime</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+          <p className="text-gray-600 dark:text-gray-400">Monitor your services and track uptime</p>
         </div>
         <div className="flex items-center gap-4">
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="form-select rounded-lg border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors px-4 py-2"
+            className="btn btn-secondary btn-md pl-4 pr-12"
           >
             <option value="1h">Last 1 hour</option>
             <option value="24h">Last 24 hours</option>
@@ -120,8 +120,8 @@ export default function DashboardPage() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate group-hover:text-gray-700">Total Monitors</dt>
-                <dd className="text-3xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">{stats?.totalMonitors || 0}</dd>
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-200">Total Monitors</dt>
+                <dd className="text-3xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{stats?.totalMonitors || 0}</dd>
               </dl>
             </div>
             <div className="ml-2 flex-shrink-0">
@@ -142,8 +142,8 @@ export default function DashboardPage() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate group-hover:text-gray-700">Up Monitors</dt>
-                <dd className="text-3xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">{stats?.upMonitors || 0}</dd>
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-200">Up Monitors</dt>
+                <dd className="text-3xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">{stats?.upMonitors || 0}</dd>
               </dl>
             </div>
             <div className="ml-2 flex-shrink-0">
@@ -164,8 +164,8 @@ export default function DashboardPage() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate group-hover:text-gray-700">Down Monitors</dt>
-                <dd className="text-3xl font-bold text-gray-900 group-hover:text-red-600 transition-colors">{stats?.downMonitors || 0}</dd>
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-200">Down Monitors</dt>
+                <dd className="text-3xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">{stats?.downMonitors || 0}</dd>
               </dl>
             </div>
             <div className="ml-2 flex-shrink-0">
@@ -186,8 +186,8 @@ export default function DashboardPage() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate group-hover:text-gray-700">Avg Response Time</dt>
-                <dd className="text-3xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate group-hover:text-gray-700 dark:group-hover:text-gray-200">Avg Response Time</dt>
+                <dd className="text-3xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {formatResponseTime(stats?.avgResponseTime || 0)}
                 </dd>
               </dl>
@@ -205,10 +205,10 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 90-Day Uptime History */}
         <div className="card">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <div>
-              <h3 className="text-lg font-medium text-gray-900">90-Day Uptime History</h3>
-              <p className="text-sm text-gray-500 mt-1">Visual representation across all monitors</p>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">90-Day Uptime History</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Visual representation across all monitors</p>
             </div>
           </div>
           <div className="px-6 py-8">
@@ -233,7 +233,7 @@ export default function DashboardPage() {
                   <div className="space-y-8">
                     {/* Main uptime bar */}
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-gray-500 whitespace-nowrap">90 days ago</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">90 days ago</span>
                       <div className="flex-1 flex gap-[2px]">
                         {uptimeHistory.map((day, index) => (
                           <div
@@ -257,11 +257,11 @@ export default function DashboardPage() {
                           </div>
                         ))}
                       </div>
-                      <span className="text-xs text-gray-500 whitespace-nowrap">Today</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Today</span>
                     </div>
 
                     {/* Legend */}
-                    <div className="flex items-center justify-center gap-8 text-sm text-gray-600 pt-2 border-t border-gray-100">
+                    <div className="flex items-center justify-center gap-8 text-sm text-gray-600 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-700">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-green-500 rounded-sm" />
                         <span>Operational</span>
@@ -275,11 +275,11 @@ export default function DashboardPage() {
                 )
               })()
             ) : (
-              <div className="flex items-center justify-center h-64 text-gray-500">
+              <div className="flex items-center justify-center h-64 text-gray-500 dark:text-gray-400">
                 <div className="text-center">
-                  <ServerIcon className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                  <ServerIcon className="h-12 w-12 mx-auto mb-2 text-gray-400 dark:text-gray-500" />
                   <p>No uptime data available</p>
-                  <p className="text-sm text-gray-400 mt-1">Data will appear after monitors start checking</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Data will appear after monitors start checking</p>
                 </div>
               </div>
             )}
@@ -288,76 +288,101 @@ export default function DashboardPage() {
 
         {/* Response Time Trend */}
         <div className="card">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <div>
-              <h3 className="text-lg font-medium text-gray-900">Response Time Trend</h3>
-              <p className="text-sm text-gray-500 mt-1">Average response time across monitors</p>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Response Time Trend</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Average response time across monitors</p>
             </div>
           </div>
           <div className="px-6 py-8">
             {responseTimeData && responseTimeData.length > 0 ? (
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={responseTimeData}>
+                  <AreaChart
+                    data={responseTimeData}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                  >
                     <defs>
-                      <linearGradient id="dashboardResponseTime" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      <linearGradient id="fillResponseTime" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="hsl(var(--chart-1, 220 70% 50%))" stopOpacity={0.25} />
+                        <stop offset="100%" stopColor="hsl(var(--chart-1, 220 70% 50%))" stopOpacity={0.0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis 
-                      dataKey="time" 
-                      stroke="#9ca3af"
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="hsl(var(--border, #e5e7eb))"
+                      strokeOpacity={0.3}
+                      vertical={false}
+                    />
+                    <XAxis
+                      dataKey="time"
+                      stroke="hsl(var(--muted-foreground, #9ca3af))"
                       fontSize={12}
                       tickLine={false}
+                      axisLine={false}
                       interval="preserveStartEnd"
+                      dy={10}
                     />
-                    <YAxis 
-                      stroke="#9ca3af"
+                    <YAxis
+                      stroke="hsl(var(--muted-foreground, #9ca3af))"
                       fontSize={12}
                       tickLine={false}
+                      axisLine={false}
                       tickFormatter={(value) => `${value}ms`}
+                      dx={-10}
                     />
-                    <Tooltip 
+                    <Tooltip
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           const isUp = payload[0].payload.status === 'up'
                           return (
-                            <div className="rounded-lg border bg-white px-3 py-2 shadow-md">
-                              <div className="text-xs text-gray-500 mb-1">{payload[0].payload.time}</div>
-                              <div className="flex items-center gap-2">
-                                <div className={`h-2 w-2 rounded-full ${isUp ? 'bg-green-500' : 'bg-red-500'}`} />
-                                <span className="text-sm font-medium text-gray-900">
+                            <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 shadow-lg">
+                              <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                                {payload[0].payload.time}
+                              </div>
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="flex items-center gap-2">
+                                  <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />
+                                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Response Time
+                                  </span>
+                                </div>
+                                <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
                                   {payload[0].value}ms
                                 </span>
                               </div>
-                              <div className={`text-xs mt-1 ${isUp ? 'text-green-600' : 'text-red-600'}`}>
-                                {isUp ? 'Operational' : 'Down'}
+                              <div className="flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                <div className={`h-2 w-2 rounded-full ${isUp ? 'bg-green-500' : 'bg-red-500'}`} />
+                                <span className={`text-xs font-medium ${isUp ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                                  {isUp ? 'Operational' : 'Downtime'}
+                                </span>
                               </div>
                             </div>
                           )
                         }
                         return null
                       }}
+                      cursor={{ stroke: 'hsl(var(--muted-foreground, #9ca3af))', strokeWidth: 1, strokeDasharray: '4 4' }}
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="responseTime" 
-                      stroke="#3b82f6" 
-                      strokeWidth={2}
-                      fill="url(#dashboardResponseTime)"
+                    <Area
+                      type="monotone"
+                      dataKey="responseTime"
+                      stroke="hsl(var(--chart-1, #3b82f6))"
+                      strokeWidth={2.5}
+                      fill="url(#fillResponseTime)"
                       fillOpacity={1}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="flex items-center justify-center h-64 text-gray-500">
+              <div className="flex items-center justify-center h-64 text-gray-500 dark:text-gray-400">
                 <div className="text-center">
-                  <ClockIcon className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                  <ClockIcon className="h-12 w-12 mx-auto mb-2 text-gray-400 dark:text-gray-500" />
                   <p>No response time data available</p>
-                  <p className="text-sm text-gray-400 mt-1">Data will appear after monitors start checking</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Data will appear after monitors start checking</p>
                 </div>
               </div>
             )}
@@ -368,31 +393,31 @@ export default function DashboardPage() {
       {/* Monitors List */}
       {monitors && monitors.length >= 3 && (
         <div className="card">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900">Recent Monitors</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Recent Monitors</h3>
               <Link
                 to="/monitors"
-                className="text-sm text-primary-600 hover:text-primary-500"
+                className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300"
               >
                 View all
               </Link>
             </div>
           </div>
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {monitors.slice(0, 5).map((monitor) => (
-              <div key={monitor.id} className="px-6 py-4 hover:bg-gray-50">
+              <div key={monitor.id} className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-900">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(monitor.status)}`}>
                       {monitor.status}
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900">{monitor.name}</h4>
-                      <p className="text-sm text-gray-500">{monitor.url || monitor.ip}</p>
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">{monitor.name}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{monitor.url || monitor.ip}</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                     <span>{formatUptime(monitor.uptimePercentage || 0)}</span>
                     <span>{formatResponseTime(monitor.avgResponseTime || 0)}</span>
                     <span>{formatRelativeTime(monitor.lastCheckAt)}</span>
@@ -407,37 +432,37 @@ export default function DashboardPage() {
       {/* Recent Incidents */}
       {incidentsData?.incidents?.length > 0 && (
         <div className="card">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900">Recent Incidents</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Recent Incidents</h3>
               <Link
                 to="/incidents"
-                className="text-sm text-primary-600 hover:text-primary-500"
+                className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300"
               >
                 View all
               </Link>
             </div>
           </div>
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {incidentsData.incidents.slice(0, 3).map((incident) => (
               <div key={incident.id} className="px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      incident.severity === 'critical' ? 'text-red-600 bg-red-50' :
-                      incident.severity === 'major' ? 'text-orange-600 bg-orange-50' :
-                      'text-yellow-600 bg-yellow-50'
+                      incident.severity === 'critical' ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30' :
+                      incident.severity === 'major' ? 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30' :
+                      'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30'
                     }`}>
                       {incident.severity}
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900">{incident.title}</h4>
-                      <p className="text-sm text-gray-500">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">{incident.title}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {incident.monitor?.name} • {formatRelativeTime(incident.startedAt)}
                       </p>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
                     {incident.status}
                   </div>
                 </div>

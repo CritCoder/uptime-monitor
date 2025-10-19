@@ -31,8 +31,8 @@ export default function IncidentsPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-red-600 mb-2">Error loading incidents</h2>
-          <p className="text-gray-600">{error.message}</p>
+          <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Error loading incidents</h2>
+          <p className="text-gray-600 dark:text-gray-400">{error.message}</p>
         </div>
       </div>
     )
@@ -41,13 +41,13 @@ export default function IncidentsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Incidents</h1>
-        <p className="text-gray-600">Track and manage service incidents</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Incidents</h1>
+        <p className="text-gray-600 dark:text-gray-400">Track and manage service incidents</p>
       </div>
 
       <div className="card">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Recent Incidents</h3>
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Recent Incidents</h3>
         </div>
         {data?.incidents?.length === 0 ? (
           <Empty>
@@ -79,12 +79,12 @@ export default function IncidentsPage() {
             </EmptyContent>
           </Empty>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {data?.incidents?.map((incident) => (
               <Link
                 key={incident.id}
                 to={`/incidents/${incident.id}`}
-                className="block px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="block px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors cursor-pointer"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -93,14 +93,14 @@ export default function IncidentsPage() {
                       {incident.severity}
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900">{incident.title}</h4>
-                      <p className="text-sm text-gray-500">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">{incident.title}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {incident.monitor?.name} • {formatRelativeTime(incident.startedAt)}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span className="text-sm text-gray-500 capitalize">{incident.status}</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400 capitalize">{incident.status}</span>
                   </div>
                 </div>
               </Link>

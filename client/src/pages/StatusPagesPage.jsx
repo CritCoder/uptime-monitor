@@ -30,8 +30,8 @@ export default function StatusPagesPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-red-600 mb-2">Error loading status pages</h2>
-          <p className="text-gray-600">{error.message}</p>
+          <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Error loading status pages</h2>
+          <p className="text-gray-600 dark:text-gray-400">{error.message}</p>
         </div>
       </div>
     )
@@ -41,8 +41,8 @@ export default function StatusPagesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Status Pages</h1>
-          <p className="text-gray-600">Create and manage public status pages</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Status Pages</h1>
+          <p className="text-gray-600 dark:text-gray-400">Create and manage public status pages</p>
         </div>
         <Link to="/status-pages/create" className="btn btn-primary btn-md">
           <PlusIcon className="h-4 w-4 mr-2" />
@@ -51,8 +51,8 @@ export default function StatusPagesPage() {
       </div>
 
       <div className="card">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">All Status Pages</h3>
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">All Status Pages</h3>
         </div>
         {data?.statusPages?.length === 0 ? (
           <Empty>
@@ -77,15 +77,15 @@ export default function StatusPagesPage() {
             </EmptyContent>
           </Empty>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {data?.statusPages?.map((statusPage) => (
-            <div key={statusPage.id} className="px-6 py-4 hover:bg-gray-50">
+            <div key={statusPage.id} className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-900">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <ServerIcon className="h-5 w-5 text-gray-400" />
                   <div>
-                    <h4 className="text-sm font-medium text-gray-900">{statusPage.name}</h4>
-                    <p className="text-sm text-gray-500">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">{statusPage.name}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {statusPage.isPublic ? 'Public' : 'Private'} • 
                       {statusPage.monitors?.length || 0} monitors
                     </p>
@@ -95,13 +95,13 @@ export default function StatusPagesPage() {
                   <Link
                     to={`/status/${statusPage.slug}`}
                     target="_blank"
-                    className="text-primary-600 hover:text-primary-500"
+                    className="text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300"
                   >
                     View
                   </Link>
                   <Link
                     to={`/status-pages/${statusPage.id}`}
-                    className="text-primary-600 hover:text-primary-500"
+                    className="text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300"
                   >
                     Edit
                   </Link>

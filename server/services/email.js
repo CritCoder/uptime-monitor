@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Postmark API configuration
 const POSTMARK_API_URL = 'https://api.postmarkapp.com/email';
-const POSTMARK_SERVER_TOKEN = process.env.POSTMARK_SERVER_TOKEN || '094b915e-4c79-41fc-a332-cb9649de41ba';
+const POSTMARK_SERVER_TOKEN = process.env.POSTMARK_SERVER_TOKEN;
 const FROM_EMAIL = process.env.FROM_EMAIL || 'helpme@bot9.ai';
 
 // Email templates
@@ -142,8 +142,8 @@ export async function sendEmail({ to, subject, template, data, html, text }) {
     }
 
     // Development mode - log email instead of sending
-    // Force production mode if we have a valid Postmark token
-    if ((process.env.NODE_ENV === 'development' || !POSTMARK_SERVER_TOKEN || POSTMARK_SERVER_TOKEN === '094b915e-4c79-41fc-a332-cb9649de41ba') && process.env.FORCE_EMAIL_DEV !== 'false') {
+    // Only use development mode if explicitly set
+    if (process.env.NODE_ENV === 'development' && process.env.FORCE_EMAIL_DEV === 'true') {
       console.log('\n📧 ===== EMAIL (DEVELOPMENT MODE) =====');
       console.log(`To: ${to}`);
       console.log(`Subject: ${emailContent.subject || subject}`);
@@ -171,7 +171,7 @@ export async function sendEmail({ to, subject, template, data, html, text }) {
         Subject: emailContent.subject || subject,
         HtmlBody: emailContent.html || html,
         TextBody: emailContent.text || text || (emailContent.html || html || '').replace(/<[^>]*>/g, ''), // Strip HTML for text version
-        MessageStream: 'broadcast'
+        MessageStream: 'outbound'
       },
       {
         headers: {
@@ -212,11 +212,11 @@ export async function sendBulkEmails(emails) {
 export async function verifyEmailConfig() {
   try {
     // Check if Postmark token is configured
-    if (!POSTMARK_SERVER_TOKEN || POSTMARK_SERVER_TOKEN === '094b915e-4c79-41fc-a332-cb9649de41ba') {
-      console.log('✅ Email configuration verified (using default Postmark token)');
-      return true;
+    if (!POSTMARK_SERVER_TOKEN || POSTMARK_SERVER_TOKEN === 'your-postmark-server-token') {
+      console.log('⚠️  Email configuration: No Postmark token configured (emails will fail)');
+      return false;
     }
-    
+
     console.log('✅ Email configuration verified (Postmark)');
     return true;
   } catch (error) {

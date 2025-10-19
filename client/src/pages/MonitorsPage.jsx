@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import { formatUptime, formatResponseTime, getStatusColor, formatRelativeTime } from '../lib/utils'
 import { PlusIcon, ServerIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '../components/Empty'
+import { Tabs, TabsList, TabsTrigger } from '../components/ui/motion-tabs'
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut'
 
 export default function MonitorsPage() {
   const [searchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const navigate = useNavigate()
   
   // Read status filter from URL
   useEffect(() => {
@@ -42,8 +45,8 @@ export default function MonitorsPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-red-600 mb-2">Error loading monitors</h2>
-          <p className="text-gray-600">{error.message}</p>
+          <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Error loading monitors</h2>
+          <p className="text-gray-600 dark:text-gray-400">{error.message}</p>
         </div>
       </div>
     )
@@ -55,82 +58,58 @@ export default function MonitorsPage() {
     return monitor.status === statusFilter
   }) || []
 
+  // Keyboard shortcuts
+  useKeyboardShortcut('k', () => navigate('/monitors/create'), { meta: true, ctrl: true })
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Monitors</h1>
-          <p className="text-gray-600">Manage your monitoring targets</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Monitors</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage your monitoring targets</p>
         </div>
         <Link
           to="/monitors/create"
-          className="btn btn-primary btn-md"
+          className="btn btn-primary btn-md flex items-center gap-2"
         >
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add Monitor
+          <PlusIcon className="h-4 w-4" />
+          <span>Add Monitor</span>
+          <span className="hidden sm:inline-flex items-center gap-1 ml-1">
+            <kbd className="px-1.5 py-0.5 text-xs font-semibold text-white bg-primary-700 border border-primary-600 rounded">⌘K</kbd>
+          </span>
         </Link>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+        <Tabs
+          value={statusFilter}
+          onValueChange={setStatusFilter}
+          className="order-2 sm:order-1"
+        >
+          <TabsList className="bg-gray-100 dark:bg-gray-800">
+            <TabsTrigger value="" className="text-gray-700 dark:text-gray-300">All</TabsTrigger>
+            <TabsTrigger value="up" className="text-gray-700 dark:text-gray-300">Up</TabsTrigger>
+            <TabsTrigger value="down" className="text-gray-700 dark:text-gray-300">Down</TabsTrigger>
+            <TabsTrigger value="paused" className="text-gray-700 dark:text-gray-300">Paused</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div className="max-w-md sm:max-w-xs order-1 sm:order-2">
           <input
             type="text"
             placeholder="Search monitors..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input"
+            className="input w-full"
           />
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setStatusFilter('')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              statusFilter === ''
-                ? 'bg-primary-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setStatusFilter('up')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              statusFilter === 'up'
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Up
-          </button>
-          <button
-            onClick={() => setStatusFilter('down')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              statusFilter === 'down'
-                ? 'bg-red-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Down
-          </button>
-          <button
-            onClick={() => setStatusFilter('paused')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              statusFilter === 'paused'
-                ? 'bg-yellow-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Paused
-          </button>
         </div>
       </div>
 
       {/* Monitors List */}
       <div className="card">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">All Monitors</h3>
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">All Monitors</h3>
         </div>
         {filteredMonitors.length === 0 ? (
           <Empty>
@@ -140,7 +119,7 @@ export default function MonitorsPage() {
               </EmptyMedia>
               <EmptyTitle>No Monitors Yet</EmptyTitle>
               <EmptyDescription>
-                You haven't created any monitors yet. Get started by creating your first monitor to track uptime and performance.
+                Get started by creating your first monitor.
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
@@ -154,17 +133,17 @@ export default function MonitorsPage() {
             </EmptyContent>
           </Empty>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {filteredMonitors.map((monitor) => (
               <Link
                 key={monitor.id}
                 to={`/monitors/${monitor.slug || monitor.id}`}
-                className="block px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="block px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors cursor-pointer"
               >
                 <div className="flex items-center justify-between gap-4">
                   {/* Screenshot Thumbnail */}
                   {monitor.screenshotUrl ? (
-                    <div className="flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                    <div className="flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                       <img 
                         src={monitor.screenshotUrl} 
                         alt={`${monitor.name} screenshot`}
@@ -179,7 +158,7 @@ export default function MonitorsPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex-shrink-0 w-20 h-14 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                    <div className="flex-shrink-0 w-20 h-14 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
                       <ServerIcon className="h-6 w-6 text-gray-400" />
                     </div>
                   )}
@@ -187,8 +166,8 @@ export default function MonitorsPage() {
                   {/* Monitor Info */}
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
                     <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-medium text-gray-900">{monitor.name}</h4>
-                      <p className="text-sm text-gray-500 truncate">{monitor.url || monitor.ip}</p>
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">{monitor.name}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{monitor.url || monitor.ip}</p>
                     </div>
                   </div>
                   
@@ -200,7 +179,7 @@ export default function MonitorsPage() {
                         {monitor.status === 'checking' ? 'Checking...' : monitor.status}
                       </div>
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-gray-500">
+                    <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
                       <span className="min-w-[60px] text-right">{formatUptime(monitor.uptimePercentage || 0)}</span>
                       <span className="min-w-[50px] text-right">{formatResponseTime(monitor.avgResponseTime || 0)}</span>
                       <span className="min-w-[50px] text-right">{formatRelativeTime(monitor.lastCheckAt)}</span>

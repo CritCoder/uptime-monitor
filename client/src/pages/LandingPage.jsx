@@ -63,12 +63,9 @@ const features = [
 ]
 
 const integrations = [
-  { name: 'Slack', logo: '💬', description: 'Channel alerts' },
-  { name: 'Discord', logo: '🎮', description: 'Team notifications' },
-  { name: 'PagerDuty', logo: '📟', description: 'Incident management' },
+  { name: 'Slack', logo: '💬', description: 'Real-time alerts in your channels' },
+  { name: 'Discord', logo: '🎮', description: 'Monitor notifications for your team' },
   { name: 'Webhook', logo: '🔗', description: 'Custom integrations' },
-  { name: 'Email', logo: '📧', description: 'Email alerts' },
-  { name: 'SMS', logo: '📱', description: 'Text alerts' },
 ]
 
 const testimonials = [
@@ -501,25 +498,25 @@ export default function LandingPage() {
       </div>
 
       {/* 7. Integrations Section */}
-      <div id="integrations" className="bg-gray-50 py-24 sm:py-32">
+      <div id="integrations" className="bg-gray-50 dark:bg-gray-900 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
-            <h2 className="text-base font-semibold leading-7 text-primary-600">Integrations</h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 className="text-base font-semibold leading-7 text-primary-600 dark:text-primary-400">Integrations</h2>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
               Connect with your favorite tools
             </p>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              Seamlessly integrate with the tools you already use every day.
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-400">
+              Get instant notifications through Slack, Discord, or custom webhooks.
             </p>
           </div>
-          
+
           <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 lg:grid-cols-3">
               {integrations.map((integration) => (
-                <div key={integration.name} className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                <div key={integration.name} className="flex flex-col items-center justify-center p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
                   <div className="text-4xl mb-3">{integration.logo}</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{integration.name}</h3>
-                  <p className="text-sm text-gray-600 text-center">{integration.description}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">{integration.name}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center">{integration.description}</p>
                 </div>
               ))}
             </div>

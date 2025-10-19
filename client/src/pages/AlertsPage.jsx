@@ -70,8 +70,8 @@ export default function AlertsPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-red-600 mb-2">Error loading alerts</h2>
-          <p className="text-gray-600">{error.message}</p>
+          <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Error loading alerts</h2>
+          <p className="text-gray-600 dark:text-gray-400">{error.message}</p>
         </div>
       </div>
     )
@@ -82,8 +82,8 @@ export default function AlertsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Alert Contacts</h1>
-            <p className="text-gray-600">Manage notification channels</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Alert Contacts</h1>
+            <p className="text-gray-600 dark:text-gray-400">Manage notification channels</p>
           </div>
           <button 
             onClick={() => setShowModal(true)}
@@ -95,8 +95,8 @@ export default function AlertsPage() {
         </div>
 
         <div className="card">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">All Contacts</h3>
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">All Contacts</h3>
           </div>
           {data?.contacts?.length === 0 ? (
             <Empty>
@@ -121,15 +121,15 @@ export default function AlertsPage() {
               </EmptyContent>
             </Empty>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {data?.contacts?.map((contact) => (
-                <div key={contact.id} className="px-6 py-4 hover:bg-gray-50">
+                <div key={contact.id} className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-900">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <BellIcon className="h-5 w-5 text-gray-400" />
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">{contact.name}</h4>
-                        <p className="text-sm text-gray-500">{contact.type} • {contact.value}</p>
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">{contact.name}</h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{contact.type} • {contact.value}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
@@ -147,13 +147,13 @@ export default function AlertsPage() {
 
       {/* Add Contact Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900">Add Alert Contact</h3>
+        <div className="fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Add Alert Contact</h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -161,7 +161,7 @@ export default function AlertsPage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
                 <input
                   {...register('name', { required: 'Name is required' })}
                   className="input mt-1"
@@ -173,7 +173,7 @@ export default function AlertsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Type</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
                 <select {...register('type')} className="select mt-1">
                   <option value="email">Email</option>
                   <option value="sms">SMS</option>
@@ -186,7 +186,7 @@ export default function AlertsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Value</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Value</label>
                 <input
                   {...register('value', { required: 'Value is required' })}
                   className="input mt-1"
