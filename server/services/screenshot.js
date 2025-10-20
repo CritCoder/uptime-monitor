@@ -60,8 +60,9 @@ export async function captureScreenshot(url) {
     await browser.close();
     browser = null;
 
-    // Return the URL path (relative to server)
-    const screenshotUrl = `/screenshots/${filename}`;
+    // Return the full screenshot URL with server URL
+    const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
+    const screenshotUrl = `${serverUrl}/screenshots/${filename}`;
     console.log(`✅ Screenshot captured for ${url}: ${screenshotUrl}`);
 
     return screenshotUrl;

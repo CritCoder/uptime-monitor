@@ -5,14 +5,14 @@ import { api } from '../lib/api'
 import { formatUptime, formatResponseTime, getStatusColor, formatRelativeTime } from '../lib/utils'
 import { PlusIcon, ServerIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '../components/Empty'
-import { Tabs, TabsList, TabsTrigger } from '../components/ui/motion-tabs'
+import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut'
 
 export default function MonitorsPage() {
   const [searchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
   const navigate = useNavigate()
   
   // Read status filter from URL
@@ -57,7 +57,7 @@ export default function MonitorsPage() {
 
   // Filter monitors by status
   const filteredMonitors = data?.monitors?.filter(monitor => {
-    if (!statusFilter) return true
+    if (!statusFilter || statusFilter === 'all') return true
     return monitor.status === statusFilter
   }) || []
 
@@ -86,13 +86,14 @@ export default function MonitorsPage() {
         <Tabs
           value={statusFilter}
           onValueChange={setStatusFilter}
+          defaultValue="all"
           className="order-2 sm:order-1"
         >
-          <TabsList className="bg-gray-100 dark:bg-gray-800">
-            <TabsTrigger value="" className="text-gray-700 dark:text-gray-300">All</TabsTrigger>
-            <TabsTrigger value="up" className="text-gray-700 dark:text-gray-300">Up</TabsTrigger>
-            <TabsTrigger value="down" className="text-gray-700 dark:text-gray-300">Down</TabsTrigger>
-            <TabsTrigger value="paused" className="text-gray-700 dark:text-gray-300">Paused</TabsTrigger>
+          <TabsList>
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="up">Up</TabsTrigger>
+            <TabsTrigger value="down">Down</TabsTrigger>
+            <TabsTrigger value="paused">Paused</TabsTrigger>
           </TabsList>
         </Tabs>
         <div className="max-w-md sm:max-w-xs order-1 sm:order-2">
