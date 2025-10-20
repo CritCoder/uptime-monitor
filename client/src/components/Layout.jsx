@@ -64,6 +64,9 @@ export default function Layout({ children }) {
             </div>
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
+            <div className="px-3 mb-2">
+              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">Main Menu</p>
+            </div>
             {navigation.map((item) => {
               const isActive = location.pathname === item.href || location.pathname.startsWith(item.href + '/')
               return (
@@ -139,6 +142,9 @@ export default function Layout({ children }) {
             </div>
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
+            <div className="px-3 mb-2">
+              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">Main Menu</p>
+            </div>
             {navigation.map((item) => {
               const isActive = location.pathname === item.href || location.pathname.startsWith(item.href + '/')
               return (

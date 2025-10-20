@@ -1,82 +1,53 @@
-import { chromium } from 'playwright';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Create screenshots directory if it doesn't exist
-const SCREENSHOTS_DIR = path.join(__dirname, '../public/screenshots');
-if (!fs.existsSync(SCREENSHOTS_DIR)) {
-  fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
-}
-
 /**
- * Capture a screenshot of a URL using Playwright
+ * Capture a screenshot of a URL using screenshot.support API
  * @param {string} url - The URL to capture
  * @returns {Promise<string|null>} - The screenshot URL path or null if failed
  */
 export async function captureScreenshot(url) {
-  let browser = null;
-
   try {
     console.log(`📸 Capturing screenshot for ${url}...`);
 
-    // Launch browser in headless mode
-    browser = await chromium.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    const apiUrl = process.env.SCREENSHOT_API_URL || 'https://screenshot.support/api/screenshots';
+    const apiKey = process.env.SCREENSHOT_API_KEY;
+
+    if (!apiKey || apiKey === 'YOUR_API_KEY') {
+      console.error('❌ Screenshot API key not configured');
+      return null;
+    }
+
+    // Build the API request URL
+    const params = new URLSearchParams({
+      url: url,
+      format: 'png',
+      width: '1920',
+      height: '1080',
+      fullPage: 'false',
+      waitFor: '0',
+      browser: 'chromium',
+      scrollToBottom: 'false',
+      timeout: '30000',
+      api_key: apiKey
     });
 
-    const context = await browser.newContext({
-      viewport: { width: 1920, height: 1080 },
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
-    });
+    const requestUrl = `${apiUrl}?${params.toString()}`;
 
-    const page = await context.newPage();
+    // Make the API request
+    const response = await fetch(requestUrl);
+    const data = await response.json();
 
-    // Set a timeout for navigation
-    await page.goto(url, {
-      waitUntil: 'networkidle',
-      timeout: 30000
-    });
+    if (!response.ok || !data.success) {
+      console.error(`❌ Screenshot API failed for ${url}:`, data);
+      return null;
+    }
 
-    // Wait a bit for any animations or lazy loading
-    await page.waitForTimeout(1000);
-
-    // Generate unique filename
-    const timestamp = Date.now();
-    const filename = `screenshot-${timestamp}.png`;
-    const filePath = path.join(SCREENSHOTS_DIR, filename);
-
-    // Take screenshot
-    await page.screenshot({
-      path: filePath,
-      fullPage: false,
-      type: 'png'
-    });
-
-    await browser.close();
-    browser = null;
-
-    // Return the full screenshot URL with server URL
-    const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
-    const screenshotUrl = `${serverUrl}/screenshots/${filename}`;
+    // Construct the full screenshot URL
+    const screenshotUrl = `https://screenshot.support${data.screenshot.filePath}`;
     console.log(`✅ Screenshot captured for ${url}: ${screenshotUrl}`);
+    console.log(`📊 Credits remaining: ${data.creditsRemaining}`);
 
     return screenshotUrl;
   } catch (error) {
     console.error(`❌ Failed to capture screenshot for ${url}:`, error.message);
-
-    if (browser) {
-      try {
-        await browser.close();
-      } catch (closeError) {
-        console.error('Error closing browser:', closeError.message);
-      }
-    }
-
     return null;
   }
 }
