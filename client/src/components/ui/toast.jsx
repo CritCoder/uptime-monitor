@@ -189,13 +189,7 @@ const ToastContainer = () => {
               key={toast.id}
               ref={measureRef(toast)}
               className={clsx(
-                "absolute right-0 bottom-0 shadow-menu rounded-xl leading-[21px] p-4 h-fit",
-                {
-                  message: "bg-geist-background text-gray-1000",
-                  success: "bg-blue-700 text-contrast-fg",
-                  warning: "bg-amber-800 text-gray-1000 dark:text-gray-100",
-                  error: "bg-red-800 text-contrast-fg"
-                }[toast.type],
+                "absolute right-0 bottom-0 shadow-menu rounded-xl leading-[21px] p-4 h-fit text-white",
                 isVisible ? "opacity-100" : "opacity-0",
                 index < lastVisibleStart && "pointer-events-none"
               )}
@@ -204,7 +198,13 @@ const ToastContainer = () => {
                 transition: "all .35s cubic-bezier(.25,.75,.6,.98)",
                 transform: shownIds.includes(toast.id)
                   ? getFinalTransform(index, toasts.length)
-                  : "translate3d(0, 100%, 150px) scale(1)"
+                  : "translate3d(0, 100%, 150px) scale(1)",
+                background: {
+                  message: "radial-gradient(ellipse at top left, rgba(55, 65, 81, 0.95) 0%, rgba(31, 41, 55, 1) 50%, rgba(17, 24, 39, 1) 100%)",
+                  success: "radial-gradient(ellipse at top left, rgba(34, 197, 94, 0.85) 0%, rgba(22, 163, 74, 1) 50%, rgba(21, 128, 61, 1) 100%)",
+                  warning: "radial-gradient(ellipse at top left, rgba(251, 191, 36, 0.85) 0%, rgba(245, 158, 11, 1) 50%, rgba(217, 119, 6, 1) 100%)",
+                  error: "radial-gradient(ellipse at top left, rgba(239, 68, 68, 0.85) 0%, rgba(220, 38, 38, 1) 50%, rgba(185, 28, 28, 1) 100%)"
+                }[toast.type]
               }}>
               <div className="flex flex-col items-center justify-between text-[.875rem]">
                 <div className="w-full h-full flex items-center justify-between gap-4">

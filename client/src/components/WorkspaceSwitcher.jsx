@@ -64,81 +64,106 @@ export default function WorkspaceSwitcher({ currentWorkspaceId }) {
   }
 
   return (
-    <>
-      {/* Workspace Switcher Button */}
+    <div className="relative">
+      {/* Merged Logo + Workspace Switcher Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-3 py-2.5 text-sm bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg transition-all shadow-sm hover:shadow"
+        className="w-full flex items-center justify-between px-3 py-3 text-sm bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg transition-all shadow-sm hover:shadow"
       >
-        <div className="flex items-center space-x-2.5 min-w-0">
-          <div className="h-8 w-8 rounded-md bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0">
-            <BuildingOfficeIcon className="h-4 w-4 text-white" />
+        <div className="flex items-center space-x-3 min-w-0">
+          {/* Logo */}
+          <div className="h-10 w-10 rounded-lg bg-primary-600 flex items-center justify-center flex-shrink-0">
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
+          {/* Text */}
           <div className="flex flex-col items-start min-w-0">
-            <span className="font-semibold text-gray-900 dark:text-gray-100 truncate text-xs">
-              {formatWorkspaceName(currentWorkspace?.name)}
+            <span className="font-bold text-gray-900 dark:text-gray-100 truncate text-sm">
+              Uptime Monitor
             </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 truncate capitalize">
-              {currentWorkspace?.role || 'Workspace'}
+            <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              {formatWorkspaceName(currentWorkspace?.name)} • <span className="capitalize">{currentWorkspace?.role || 'Member'}</span>
             </span>
           </div>
         </div>
         <ChevronUpDownIcon className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0 ml-2" />
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Modern Dropdown Menu */}
       {isOpen && (
         <>
           <div
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1">
-            <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
-              Workspaces
+          <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            {/* Header */}
+            <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-750 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                Switch Workspace
+              </h3>
             </div>
-            <div className="max-h-64 overflow-y-auto py-1">
+
+            {/* Workspace List */}
+            <div className="max-h-80 overflow-y-auto py-2">
               {workspacesData?.workspaces?.map((workspace) => (
                 <button
                   key={workspace.id}
                   onClick={() => handleSwitchWorkspace(workspace)}
-                  className="w-full flex items-center justify-between px-3 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group"
+                  className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-all group ${
+                    currentWorkspace?.id === workspace.id
+                      ? 'bg-primary-50 dark:bg-primary-900/20'
+                      : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                  }`}
                 >
                   <div className="flex items-center space-x-3 min-w-0">
-                    <div className={`h-8 w-8 rounded-md flex items-center justify-center flex-shrink-0 ${
+                    <div className={`h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
                       currentWorkspace?.id === workspace.id
-                        ? 'bg-gradient-to-br from-primary-500 to-primary-600'
+                        ? 'bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/50'
                         : 'bg-gray-100 dark:bg-gray-700 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
                     }`}>
-                      <BuildingOfficeIcon className={`h-4 w-4 ${
+                      <BuildingOfficeIcon className={`h-5 w-5 ${
                         currentWorkspace?.id === workspace.id ? 'text-white' : 'text-gray-500 dark:text-gray-400'
                       }`} />
                     </div>
                     <div className="text-left min-w-0">
-                      <div className="font-medium text-gray-900 dark:text-gray-100 truncate text-sm">{formatWorkspaceName(workspace.name)}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                      <div className={`font-semibold truncate ${
+                        currentWorkspace?.id === workspace.id
+                          ? 'text-primary-700 dark:text-primary-300'
+                          : 'text-gray-900 dark:text-gray-100'
+                      }`}>
+                        {formatWorkspaceName(workspace.name)}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 capitalize mt-0.5">
                         {workspace.role} • {workspace.monitorCount} monitors
                       </div>
                     </div>
                   </div>
                   {currentWorkspace?.id === workspace.id && (
-                    <CheckIcon className="h-4 w-4 text-primary-600 dark:text-primary-400 flex-shrink-0" />
+                    <div className="flex-shrink-0 ml-2">
+                      <div className="h-6 w-6 rounded-full bg-primary-600 dark:bg-primary-500 flex items-center justify-center">
+                        <CheckIcon className="h-4 w-4 text-white" />
+                      </div>
+                    </div>
                   )}
                 </button>
               ))}
             </div>
-            <div className="border-t border-gray-100 dark:border-gray-700 pt-1">
+
+            {/* Create Workspace Button */}
+            <div className="border-t border-gray-200 dark:border-gray-700 p-2">
               <button
                 onClick={() => {
                   setIsOpen(false)
                   setShowCreateModal(true)
                 }}
-                className="w-full flex items-center space-x-2 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded transition-colors"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-all group"
               >
-                <div className="h-8 w-8 rounded-md bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                  <PlusIcon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                <div className="h-9 w-9 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0 group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 transition-colors">
+                  <PlusIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 </div>
-                <span className="font-medium">Create Workspace</span>
+                <span>Create New Workspace</span>
               </button>
             </div>
           </div>
@@ -223,7 +248,7 @@ export default function WorkspaceSwitcher({ currentWorkspaceId }) {
           </div>
         </Dialog>
       </Transition>
-    </>
+    </div>
   )
 }
 

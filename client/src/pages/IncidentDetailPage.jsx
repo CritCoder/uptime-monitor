@@ -99,6 +99,26 @@ export default function IncidentDetailPage() {
         Back to Incidents
       </Link>
 
+      {/* Resolved Banner - Show prominently when resolved */}
+      {incident.status === 'resolved' && (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-lg shadow-sm">
+          <div className="flex items-center">
+            <CheckCircleIcon className="h-6 w-6 text-green-600 mr-3" />
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-green-900">Incident Resolved</h3>
+              <p className="text-sm text-green-700 mt-1">
+                This incident has been resolved. All services are operational.
+                {incident.resolvedAt && (
+                  <span className="ml-2">
+                    • Resolved {formatRelativeTime(incident.resolvedAt)}
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="card p-6">
         <div className="flex items-start justify-between">
@@ -111,14 +131,12 @@ export default function IncidentDetailPage() {
                 <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
                 {incident.severity}
               </span>
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(incident.status)}`}>
-                {incident.status === 'resolved' ? (
-                  <CheckCircleIcon className="h-4 w-4 mr-1" />
-                ) : (
+              {incident.status !== 'resolved' && (
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(incident.status)}`}>
                   <ClockIcon className="h-4 w-4 mr-1" />
-                )}
-                {incident.status}
-              </span>
+                  {incident.status}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -208,16 +226,32 @@ export default function IncidentDetailPage() {
               </span>
             </div>
 
-            {/* Status Badge */}
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg text-center">
-              <div className="text-xs text-gray-500">Current Status</div>
-              <div className={`text-sm font-semibold mt-1 capitalize ${
-                incident.status === 'resolved' ? 'text-green-600' : 
-                incident.status === 'investigating' ? 'text-blue-600' : 
+            {/* Status Badge with Timestamp */}
+            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+              <div className="text-xs text-gray-500 text-center">Current Status</div>
+              <div className={`text-sm font-semibold mt-1 capitalize text-center ${
+                incident.status === 'resolved' ? 'text-green-600' :
+                incident.status === 'investigating' ? 'text-blue-600' :
                 'text-orange-600'
               }`}>
                 {incident.status}
               </div>
+              {incident.resolvedAt && incident.status === 'resolved' && (
+                <div className="text-xs text-gray-500 mt-2 text-center">
+                  {new Date(incident.resolvedAt).toLocaleString()}
+                  <div className="text-xs text-gray-400">
+                    ({formatRelativeTime(incident.resolvedAt)})
+                  </div>
+                </div>
+              )}
+              {!incident.resolvedAt && incident.startedAt && (
+                <div className="text-xs text-gray-500 mt-2 text-center">
+                  Started: {new Date(incident.startedAt).toLocaleString()}
+                  <div className="text-xs text-gray-400">
+                    ({formatRelativeTime(incident.startedAt)})
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

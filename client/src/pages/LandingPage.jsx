@@ -718,11 +718,14 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="mt-12 border-t border-gray-800 pt-8">
-            <div className="flex flex-col sm:flex-row items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-xs leading-5 text-gray-400">
                 &copy; 2024 Uptime Monitor. All rights reserved.
               </p>
-              <div className="flex gap-x-6 mt-4 sm:mt-0">
+              <p className="text-xs text-gray-400">
+                Built with ❤️ for developers
+              </p>
+              <div className="flex gap-x-6">
                 <a href="#" className="text-gray-400 hover:text-gray-300">
                   <span className="sr-only">Twitter</span>
                   <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -743,9 +746,6 @@ export default function LandingPage() {
                 </a>
               </div>
             </div>
-            <p className="text-xs text-center text-gray-400 mt-4">
-              Built with ❤️ for developers
-            </p>
           </div>
         </div>
       </footer>

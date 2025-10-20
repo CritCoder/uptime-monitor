@@ -3,7 +3,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import { formatUptime, formatResponseTime, getStatusColor, formatRelativeTime } from '../lib/utils'
-import { PlusIcon, ServerIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, ServerIcon, ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '../components/Empty'
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut'
@@ -36,6 +36,17 @@ export default function MonitorsPage() {
     }
   })
 
+  // Get workspace data for limit checking
+  const { data: workspaceData } = useQuery({
+    queryKey: ['workspaces'],
+    queryFn: () => api.get('/workspaces').then(res => res.data),
+  })
+
+  const currentWorkspace = workspaceData?.workspaces?.[0]
+  const monitorLimit = currentWorkspace?.plan === 'pro' ? -1 : 5 // -1 = unlimited
+  const monitorCount = data?.monitors?.length || 0
+  const isLimitReached = monitorLimit !== -1 && monitorCount >= monitorLimit
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -63,6 +74,24 @@ export default function MonitorsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Monitor Limit Warning Banner */}
+      {isLimitReached && (
+        <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-lg shadow-lg border-l-4 border-red-700">
+          <div className="flex items-center">
+            <ExclamationTriangleIcon className="h-6 w-6 mr-3 flex-shrink-0" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg">Monitor Limit Reached</h3>
+              <p className="text-sm text-red-50 mt-1">
+                You've reached your limit of {monitorLimit} monitors on the Free plan.
+                <Link to="/settings" className="ml-2 underline font-medium hover:text-white">
+                  Upgrade to Pro
+                </Link> for unlimited monitors.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

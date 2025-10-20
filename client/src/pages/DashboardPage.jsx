@@ -92,7 +92,8 @@ export default function DashboardPage() {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="btn btn-secondary btn-md pl-4 pr-12"
+            className="select btn btn-secondary btn-md pl-4 pr-12"
+            style={{ backgroundPosition: 'right 16px center' }}
           >
             <option value="1h">Last 1 hour</option>
             <option value="24h">Last 24 hours</option>
