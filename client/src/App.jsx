@@ -38,12 +38,13 @@ import TermsPage from './pages/TermsPage'
 import SecurityPage from './pages/SecurityPage'
 import CompliancePage from './pages/CompliancePage'
 import LoadingSpinner from './components/LoadingSpinner'
-import { Toaster } from './components/ui/sonner'
+import { useInitToast } from './lib/toast'
 
 function App() {
   const { user, loading } = useAuth()
   const location = useLocation()
   useSocket()
+  useInitToast()
 
   if (loading) {
     return <LoadingSpinner />
@@ -51,7 +52,6 @@ function App() {
 
   return (
     <>
-      <Toaster />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {/* Public routes */}

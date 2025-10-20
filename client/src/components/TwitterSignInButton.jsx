@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 export default function TwitterSignInButton({ text = 'Continue with Twitter' }) {
   const [loading, setLoading] = useState(false);

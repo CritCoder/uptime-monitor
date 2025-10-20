@@ -1,5 +1,5 @@
 import { useTheme } from "../../hooks/useTheme"
-import { Toaster as Sonner } from "sonner"
+import { Toaster as Sonner } from "@/lib/toast"
 
 const Toaster = ({ ...props }) => {
   const { theme } = useTheme()

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import { useAuth } from '../hooks/useAuth'
-import { toast } from 'sonner'
+import { toast } from '@/lib/toast'
 
 export const SocketContext = createContext()
 

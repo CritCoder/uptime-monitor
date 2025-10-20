@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useForm } from 'react-hook-form'
 import { api } from '../lib/api'
-import { toast } from 'sonner'
+import { toast } from '@/lib/toast'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 export default function SettingsPage() {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 export default function GoogleSignInButton({ text = 'Continue with Google' }) {
   const [loading, setLoading] = useState(false);

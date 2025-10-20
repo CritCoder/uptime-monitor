@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../lib/api'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { CheckCircle, XCircle } from 'lucide-react'
-import { toast } from 'sonner'
+import { toast } from '@/lib/toast'
 import { useAuth } from '../contexts/AuthContext'
 
 function VerifyEmailPage() {
