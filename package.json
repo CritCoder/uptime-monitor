@@ -2,6 +2,7 @@
   "name": "uptime-monitoring-saas",
   "version": "1.0.0",
   "description": "Professional Uptime Monitoring SaaS Platform",
+  "private": true,
   "type": "module",
   "main": "server/index.js",
   "scripts": {

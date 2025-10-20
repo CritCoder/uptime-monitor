@@ -19,7 +19,7 @@ function VerifyEmailPage() {
     // If redirected here because verification is required
     if (required) {
       setStatus('required')
-      setMessage('You must verify your email address before accessing your account. Please check your inbox for the verification link.')
+      setMessage('You must verify your email address before accessing your account. Please check your inbox (and spam folder) for the verification link.')
       return
     }
 
@@ -62,7 +62,7 @@ function VerifyEmailPage() {
 
       const response = await api.post('/auth/resend-verification', { email })
       if (response.data.success) {
-        toast.success('Verification email sent! Please check your inbox.')
+        toast.success('Verification email sent! Please check your inbox and spam folder.')
       } else {
         toast.error(response.data.error || 'Failed to resend email')
       }
@@ -71,7 +71,7 @@ function VerifyEmailPage() {
       if (error.response?.data?.error) {
         toast.error(error.response.data.error)
       } else {
-        toast.success('If your account exists, you will receive a verification email.')
+        toast.success('If your account exists, you will receive a verification email. Please check your spam folder if you don\'t see it.')
       }
     } finally {
       setResending(false)
@@ -117,7 +117,7 @@ function VerifyEmailPage() {
               <button
                 onClick={handleResendEmail}
                 disabled={resending}
-                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {resending ? (
                   <>
@@ -130,7 +130,7 @@ function VerifyEmailPage() {
               </button>
               <button
                 onClick={() => navigate('/login')}
-                className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
               >
                 Back to Login
               </button>
@@ -138,14 +138,14 @@ function VerifyEmailPage() {
           </>
         ) : (
           <>
-            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
-              <XCircle className="h-10 w-10 text-red-600" />
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-50 mb-4">
+              <XCircle className="h-10 w-10 text-red-500" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Verification Failed</h2>
             <p className="text-gray-600 mb-6">{message}</p>
             <button
               onClick={() => navigate('/login')}
-              className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
               Go to Login
             </button>

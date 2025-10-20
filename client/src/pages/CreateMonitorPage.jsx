@@ -178,7 +178,7 @@ export default function CreateMonitorPage() {
     setResendingEmail(true)
     try {
       await api.post('/auth/resend-verification')
-      playSuccessSound(); toast.success('Verification email sent! Please check your inbox.')
+      playSuccessSound(); toast.success('Verification email sent! Please check your inbox and spam folder.')
     } catch (error) {
       console.error('Resend verification error:', error)
       playErrorSound(); toast.error('Failed to send verification email. Please try again.')

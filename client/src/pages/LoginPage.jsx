@@ -187,7 +187,7 @@ export default function LoginPage() {
             </div>
             <div className="mt-4 text-center text-sm text-gray-600">
               <p>Email: demo@uptime-monitor.com</p>
-              <p>Password: demo123</p>
+              <p>Password: demo1234</p>
             </div>
           </div>
         </form>

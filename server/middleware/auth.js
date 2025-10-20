@@ -31,7 +31,7 @@ export const authenticateToken = async (req, res, next) => {
       return res.status(403).json({ 
         error: 'Email verification required',
         code: 'EMAIL_NOT_VERIFIED',
-        message: 'Please verify your email address to continue. Check your inbox for the verification link.'
+        message: 'Please verify your email address to continue. Check your inbox (and spam folder) for the verification link.'
       });
     }
 

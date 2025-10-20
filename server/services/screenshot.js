@@ -1,59 +1,81 @@
-import axios from 'axios';
+import { chromium } from 'playwright';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const SCREENSHOT_API_URL = process.env.SCREENSHOT_API_URL || 'https://screenshot.support/api/screenshots';
-const SCREENSHOT_API_KEY = process.env.SCREENSHOT_API_KEY;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Create screenshots directory if it doesn't exist
+const SCREENSHOTS_DIR = path.join(__dirname, '../public/screenshots');
+if (!fs.existsSync(SCREENSHOTS_DIR)) {
+  fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
+}
 
 /**
- * Capture a screenshot of a URL using the screenshot API
+ * Capture a screenshot of a URL using Playwright
  * @param {string} url - The URL to capture
- * @returns {Promise<string|null>} - The screenshot URL or null if failed
+ * @returns {Promise<string|null>} - The screenshot URL path or null if failed
  */
 export async function captureScreenshot(url) {
-  // Skip if no API key is configured
-  if (!SCREENSHOT_API_KEY || SCREENSHOT_API_KEY === 'YOUR_API_KEY') {
-    console.warn('Screenshot API key not configured, skipping screenshot capture');
-    return null;
-  }
+  let browser = null;
 
   try {
-    const response = await axios.post(
-      SCREENSHOT_API_URL,
-      {
-        url,
-        format: 'png',
-        width: 1920,
-        height: 1080,
-        fullPage: false,
-        waitFor: 1000,
-        browser: 'chromium',
-        scrollToBottom: false,
-        timeout: 30000
-      },
-      {
-        headers: {
-          'X-API-Key': SCREENSHOT_API_KEY,
-          'Content-Type': 'application/json'
-        },
-        timeout: 35000 // 35 seconds timeout
-      }
-    );
+    console.log(`📸 Capturing screenshot for ${url}...`);
 
-    if (response.data && response.data.success && response.data.screenshot) {
-      // Construct the full screenshot URL
-      const screenshotPath = response.data.screenshot.filePath;
-      const screenshotUrl = `https://screenshot.support${screenshotPath}`;
-      
-      console.log(`📸 Screenshot captured for ${url}: ${screenshotUrl}`);
-      return screenshotUrl;
-    }
+    // Launch browser in headless mode
+    browser = await chromium.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
 
-    console.warn(`Failed to capture screenshot for ${url}: No screenshot data in response`);
-    return null;
+    const context = await browser.newContext({
+      viewport: { width: 1920, height: 1080 },
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+    });
+
+    const page = await context.newPage();
+
+    // Set a timeout for navigation
+    await page.goto(url, {
+      waitUntil: 'networkidle',
+      timeout: 30000
+    });
+
+    // Wait a bit for any animations or lazy loading
+    await page.waitForTimeout(1000);
+
+    // Generate unique filename
+    const timestamp = Date.now();
+    const filename = `screenshot-${timestamp}.png`;
+    const filePath = path.join(SCREENSHOTS_DIR, filename);
+
+    // Take screenshot
+    await page.screenshot({
+      path: filePath,
+      fullPage: false,
+      type: 'png'
+    });
+
+    await browser.close();
+    browser = null;
+
+    // Return the URL path (relative to server)
+    const screenshotUrl = `/screenshots/${filename}`;
+    console.log(`✅ Screenshot captured for ${url}: ${screenshotUrl}`);
+
+    return screenshotUrl;
   } catch (error) {
-    console.error(`Failed to capture screenshot for ${url}:`, error.message);
-    if (error.response) {
-      console.error('Screenshot API error:', error.response.data);
+    console.error(`❌ Failed to capture screenshot for ${url}:`, error.message);
+
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (closeError) {
+        console.error('Error closing browser:', closeError.message);
+      }
     }
+
     return null;
   }
 }

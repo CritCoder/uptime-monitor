@@ -23,6 +23,9 @@ export default function MonitorsPage() {
     }
   }, [searchParams])
 
+  // Keyboard shortcuts - must be called before any early returns
+  useKeyboardShortcut('k', () => navigate('/monitors/create'), { meta: true, ctrl: true })
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['monitors', page, search, statusFilter],
     queryFn: () => api.get(`/monitors?page=${page}&search=${search}`).then(res => res.data),
@@ -57,9 +60,6 @@ export default function MonitorsPage() {
     if (!statusFilter) return true
     return monitor.status === statusFilter
   }) || []
-
-  // Keyboard shortcuts
-  useKeyboardShortcut('k', () => navigate('/monitors/create'), { meta: true, ctrl: true })
 
   return (
     <div className="space-y-6">

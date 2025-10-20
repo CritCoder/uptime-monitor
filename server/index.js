@@ -9,6 +9,8 @@ import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import passport from 'passport';
+import { fileURLToPath } from 'url';
+import path from 'path';
 // import { createBullBoard } from '@bull-board/api';
 // import { BullAdapter } from '@bull-board/api/bullAdapter';
 // import { ExpressAdapter } from '@bull-board/express';
@@ -34,6 +36,9 @@ import { startMonitorScheduler } from './services/scheduler.js';
 import { verifyEmailConfig } from './services/email.js';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = createServer(app);
@@ -74,6 +79,9 @@ app.use('/webhooks', webhookRoutes);
 // JSON body parser (after webhooks)
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files (screenshots)
+app.use('/screenshots', express.static(path.join(__dirname, 'public/screenshots')));
 
 // Initialize Passport
 app.use(passport.initialize());

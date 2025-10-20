@@ -171,7 +171,7 @@ export async function sendEmail({ to, subject, template, data, html, text }) {
         Subject: emailContent.subject || subject,
         HtmlBody: emailContent.html || html,
         TextBody: emailContent.text || text || (emailContent.html || html || '').replace(/<[^>]*>/g, ''), // Strip HTML for text version
-        MessageStream: 'outbound'
+        MessageStream: 'broadcast'
       },
       {
         headers: {

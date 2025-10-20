@@ -17,12 +17,12 @@ export default function ForgotPasswordPage() {
       const response = await api.post('/auth/forgot-password', data)
       // Always show success for security (don't reveal if email exists)
       setEmailSent(true)
-      toast.success('If an account exists with this email, you will receive password reset instructions')
+      toast.success('If an account exists with this email, you will receive password reset instructions. Please check your spam folder if you don\'t see it.')
     } catch (error) {
       console.error('Forgot password error:', error)
       // For security, we don't reveal if email exists or not
       setEmailSent(true)
-      toast.success('If an account exists with this email, you will receive password reset instructions')
+      toast.success('If an account exists with this email, you will receive password reset instructions. Please check your spam folder if you don\'t see it.')
     } finally {
       setLoading(false)
     }
@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
               We've sent password reset instructions to your email address.
-              Please check your inbox and follow the link to reset your password.
+              Please check your inbox (and spam folder) and follow the link to reset your password.
             </p>
           </div>
           <div className="text-center">

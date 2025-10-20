@@ -283,7 +283,18 @@ router.post('/verify-email', async (req, res) => {
 // Resend verification email
 router.post('/resend-verification', async (req, res) => {
   try {
-    const { email } = req.body;
+    let email = req.body.email;
+
+    // If email is not provided in body, try to get it from authenticated user
+    if (!email && req.headers.authorization) {
+      try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        email = decoded.email;
+      } catch (err) {
+        // Invalid token, continue to require email in body
+      }
+    }
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
@@ -297,7 +308,7 @@ router.post('/resend-verification', async (req, res) => {
       // Don't reveal if user exists or not
       return res.json({
         success: true,
-        message: 'If an account exists with that email, a verification link has been sent.'
+        message: 'If an account exists with that email, a verification link has been sent. Please check your spam folder if you don\'t see it.'
       });
     }
 
@@ -332,7 +343,7 @@ router.post('/resend-verification', async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Verification email sent. Please check your inbox.'
+      message: 'Verification email sent. Please check your inbox and spam folder.'
     });
   } catch (error) {
     console.error('Resend verification error:', error);
@@ -387,7 +398,7 @@ router.post('/forgot-password', async (req, res) => {
     // Always return success for security (don't reveal if email exists or was sent)
     res.json({
       success: true,
-      message: 'If an account with that email exists, a password reset link has been sent.'
+      message: 'If an account with that email exists, a password reset link has been sent. Please check your spam folder if you don\'t see it.'
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
