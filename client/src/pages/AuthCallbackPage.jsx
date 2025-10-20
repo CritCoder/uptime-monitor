@@ -32,7 +32,7 @@ export default function AuthCallbackPage() {
           // Fetch user data
           await fetchUser();
 
-          toast.success('Successfully signed in with Google!');
+          toast.success('Successfully signed in!');
           navigate('/dashboard');
         } catch (error) {
           console.error('Auth callback error:', error);

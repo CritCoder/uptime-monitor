@@ -34,6 +34,7 @@
     "nodemailer": "^6.9.7",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "passport-twitter": "^1.0.4",
     "ping": "^0.4.4",
     "playwright": "^1.56.1",
     "prisma": "^5.7.1",

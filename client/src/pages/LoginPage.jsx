@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Logo from '../components/Logo'
 import GoogleSignInButton from '../components/GoogleSignInButton'
+import TwitterSignInButton from '../components/TwitterSignInButton'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -171,8 +172,9 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 space-y-3">
               <GoogleSignInButton text="Sign in with Google" />
+              <TwitterSignInButton text="Sign in with Twitter" />
             </div>
           </div>
 

@@ -594,4 +594,53 @@ router.get('/google/callback', (req, res) => {
   });
 });
 
+// Twitter OAuth routes
+// Initiate Twitter OAuth
+router.get('/twitter', (req, res) => {
+  if (!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET) {
+    return res.status(400).json({
+      error: 'Twitter OAuth not configured',
+      message: 'Twitter Sign-In is not available in development mode'
+    });
+  }
+  passport.authenticate('twitter', {
+    session: false
+  })(req, res);
+});
+
+// Twitter OAuth callback
+router.get('/twitter/callback', (req, res) => {
+  if (!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET) {
+    return res.status(400).json({
+      error: 'Twitter OAuth not configured',
+      message: 'Twitter Sign-In is not available in development mode'
+    });
+  }
+
+  passport.authenticate('twitter', {
+    session: false,
+    failureRedirect: `${process.env.CLIENT_URL}/login?error=oauth_failed`
+  })(req, res, async (err) => {
+    if (err) {
+      console.error('Twitter OAuth callback error:', err);
+      return res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
+    }
+
+    try {
+      // Generate JWT token for the authenticated user
+      const token = jwt.sign(
+        { userId: req.user.id, email: req.user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      // Redirect to frontend with token
+      res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}`);
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+      res.redirect(`${process.env.CLIENT_URL}/login?error=auth_failed`);
+    }
+  });
+});
+
 export default router;
